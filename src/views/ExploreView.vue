@@ -20,6 +20,9 @@
           <WeatherLegend />
         </div>
       </template>
+      <template #bottom>
+        <TimeSlider />
+      </template>
     </MapControls>
   </main>
 </template>
@@ -30,6 +33,7 @@ import CityLayer from '@/components/map/CityLayer.vue'
 import LayerSwitcher from '@/components/map/LayerSwitcher.vue'
 import MapControls from '@/components/map/MapControls.vue'
 import MapView from '@/components/map/MapView.vue'
+import TimeSlider from '@/components/map/TimeSlider.vue'
 import WeatherLegend from '@/components/map/WeatherLegend.vue'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
 import RequestCounter from '@/components/ui/RequestCounter.vue'

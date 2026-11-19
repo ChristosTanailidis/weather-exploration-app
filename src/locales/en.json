@@ -91,5 +91,12 @@
     "precipitation": "Precipitation ({unit} per hour)",
     "wind": "Wind speed ({unit})",
     "clouds": "Cloud cover ({unit})"
+  },
+  "time": {
+    "label": "Forecast time",
+    "now": "Now",
+    "backToNow": "Back to now",
+    "selected": "{time}, in {hours} h",
+    "nowAt": "Now, {time}"
   }
 }

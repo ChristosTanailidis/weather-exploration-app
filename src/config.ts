@@ -21,7 +21,7 @@ export const config = {
   /** From this zoom on, city labels also show the city name. */
   cityNameMinZoom: 4,
   /** Minimum distance between legend labels, in % of the legend width. */
-  legendMinTickGapPct: 12,
+  legendMinTickGapPct: 15,
   thinningGrid: { cols: 8, rows: 6 },
   enableGridLayer: true,
   gridMaxPoints: 80,

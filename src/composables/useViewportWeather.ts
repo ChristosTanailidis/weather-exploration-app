@@ -3,6 +3,7 @@ import { shallowRef, watch } from 'vue'
 import { weatherService } from '@/api/weatherService'
 import type { Cached } from '@/api/weatherService'
 import { useCities } from '@/composables/useCities'
+import { useForecastTime } from '@/composables/useForecastTime'
 import { useMapContext } from '@/composables/useMap'
 import { config } from '@/config'
 import { isOnVisibleHemisphere, thinCities } from '@/domain/geo'
@@ -57,8 +58,12 @@ export function useViewportWeather() {
     void refresh()
   })
 
+  // Expired data is refreshed when the tab becomes visible again and at
+  // each new hour, so the 48 h window keeps covering the slider. The
+  // service only requests what has expired, and nothing while hidden.
   const visibility = useDocumentVisibility()
-  watch(visibility, (state) => {
+  const { nowHourSec } = useForecastTime()
+  watch([visibility, nowHourSec], ([state]) => {
     if (state === 'visible') {
       void refresh()
     }
