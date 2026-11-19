@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/*
+ * Neutral placeholder tokens. Final values come with the design pass.
+ * Components use these semantic names, never raw colour values.
+ */
+@theme {
+  --color-surface: var(--color-white);
+  --color-surface-muted: var(--color-neutral-100);
+  --color-ink: var(--color-neutral-900);
+  --color-ink-muted: var(--color-neutral-600);
+  --color-line: var(--color-neutral-300);
+  --color-accent: var(--color-neutral-800);
+  --color-danger: var(--color-red-700);
+}
+
+@layer base {
+  html,
+  body,
+  #app {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-surface text-ink antialiased;
+  }
+}
