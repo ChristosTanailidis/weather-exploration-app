@@ -13,6 +13,9 @@ const HEMISPHERE_DEG = 90
 
 /** Wraps a longitude into [-180, 180). */
 export function normalizeLon(lon: number): number {
+  if (lon >= -HALF_TURN_DEG && lon < HALF_TURN_DEG) {
+    return lon === 0 ? 0 : lon
+  }
   const wrapped = ((((lon + HALF_TURN_DEG) % FULL_TURN_DEG) + FULL_TURN_DEG) % FULL_TURN_DEG) - HALF_TURN_DEG
   return wrapped === 0 ? 0 : wrapped
 }

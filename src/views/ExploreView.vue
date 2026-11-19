@@ -13,7 +13,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
+import { useUrlState } from '@/composables/useUrlState'
 import { env } from '@/config'
 
 const { t } = useI18n()
+
+useUrlState()
 </script>

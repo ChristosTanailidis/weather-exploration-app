@@ -237,3 +237,10 @@ describe('boundsCenter', () => {
     expect(boundsCenter({ west: 10, south: 0, east: 30, north: 20 })).toEqual({ lat: 10, lon: 20 })
   })
 })
+
+describe('normalizeLon precision', () => {
+  it('returns in-range longitudes unchanged', () => {
+    expect(normalizeLon(22.94)).toBe(22.94)
+    expect(normalizeLon(-179.999)).toBe(-179.999)
+  })
+})

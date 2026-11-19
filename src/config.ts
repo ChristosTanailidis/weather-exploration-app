@@ -21,6 +21,10 @@ export const config = {
   forecastHours: 48,
   forecastDays: 7,
   coordPrecision: 2,
+  defaultView: { lat: 30, lon: 15, zoom: 1.5 },
+  maxZoom: 22,
+  compareMin: 2,
+  compareMax: 4,
 } as const
 
 /** Values that come from the build environment. */
