@@ -27,6 +27,7 @@ export default defineConfig(
   }),
   {
     rules: {
+      '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }],
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       'no-console': ['error', { allow: ['warn', 'error'] }],

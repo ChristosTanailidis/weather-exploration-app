@@ -19,5 +19,46 @@
       "variable": "VITE_MAPBOX_TOKEN=",
       "command": "npm run dev"
     }
+  },
+  "weather": {
+    "clearSky": "Clear sky",
+    "mainlyClear": "Mainly clear",
+    "partlyCloudy": "Partly cloudy",
+    "overcast": "Overcast",
+    "fog": "Fog",
+    "rimeFog": "Freezing fog",
+    "drizzleLight": "Light drizzle",
+    "drizzleModerate": "Drizzle",
+    "drizzleDense": "Heavy drizzle",
+    "freezingDrizzleLight": "Light freezing drizzle",
+    "freezingDrizzleDense": "Freezing drizzle",
+    "rainSlight": "Light rain",
+    "rainModerate": "Rain",
+    "rainHeavy": "Heavy rain",
+    "freezingRainLight": "Light freezing rain",
+    "freezingRainHeavy": "Freezing rain",
+    "snowSlight": "Light snow",
+    "snowModerate": "Snow",
+    "snowHeavy": "Heavy snow",
+    "snowGrains": "Snow grains",
+    "showersSlight": "Light showers",
+    "showersModerate": "Showers",
+    "showersViolent": "Violent showers",
+    "snowShowersSlight": "Light snow showers",
+    "snowShowersHeavy": "Snow showers",
+    "thunderstorm": "Thunderstorm",
+    "thunderstormHailSlight": "Thunderstorm with hail",
+    "thunderstormHailHeavy": "Thunderstorm with heavy hail",
+    "unknown": "Unknown"
+  },
+  "units": {
+    "celsius": "{value}°C",
+    "fahrenheit": "{value}°F",
+    "kmh": "{value} km/h",
+    "mph": "{value} mph",
+    "mm": "{value} mm",
+    "in": "{value} in",
+    "tempShort": "{value}°",
+    "missing": "–"
   }
 }
