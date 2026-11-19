@@ -59,10 +59,14 @@
     "mm": "{value} mm",
     "in": "{value} in",
     "tempShort": "{value}°",
-    "missing": "–"
+    "missing": "–",
+    "percent": "{value}%"
   },
   "map": {
     "label": "Weather map",
     "controls": "Map controls"
+  },
+  "debug": {
+    "requests": "{requests} requests · {locations} locations"
   }
 }

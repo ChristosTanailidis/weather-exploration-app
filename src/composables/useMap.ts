@@ -1,6 +1,6 @@
 import { useDebounceFn } from '@vueuse/core'
 import mapboxgl from 'mapbox-gl'
-import { inject, onBeforeUnmount, onMounted, provide, readonly, shallowRef } from 'vue'
+import { inject, onMounted, onUnmounted, provide, readonly, shallowRef } from 'vue'
 import type { InjectionKey, Ref, ShallowRef } from 'vue'
 import { config, env } from '@/config'
 import type { Bounds } from '@/domain/geo'
@@ -66,7 +66,8 @@ export function useMap(container: Readonly<ShallowRef<HTMLElement | null>>): Map
     map.value = instance
   })
 
-  onBeforeUnmount(() => {
+  // After children have unmounted, so layer components can clean up first.
+  onUnmounted(() => {
     styleReady.value = false
     map.value?.remove()
     map.value = null

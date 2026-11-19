@@ -13,12 +13,21 @@ export const config = {
   searchMinChars: 2,
   searchResultCount: 8,
   maxCityMarkers: 48,
+  /** Cities this close to the globe's horizon are skipped. */
+  hemisphereMarginDeg: 5,
+  /** Map icon bitmap size; drawn at half size on screen (pixel ratio 2). */
+  mapIconPx: 64,
+  mapIconPixelRatio: 2,
+  /** From this zoom on, city labels also show the city name. */
+  cityNameMinZoom: 4,
   thinningGrid: { cols: 8, rows: 6 },
   enableGridLayer: true,
   gridMaxPoints: 80,
   maxLocationsPerRequest: 100,
   nearestCityMaxKm: 50,
   forecastHours: 48,
+  /** How often the clock behind "now" is refreshed. */
+  clockTickMs: 60_000,
   forecastDays: 7,
   coordPrecision: 2,
   mapStyle: 'mapbox://styles/mapbox/light-v11',

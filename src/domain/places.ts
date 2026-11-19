@@ -1,4 +1,7 @@
-import type { Place, PlaceKind } from '@/domain/types'
+import type { City, Place, PlaceKind } from '@/domain/types'
+
+/** Cache key and place key of a dataset city. */
+export const cityKey = (city: Pick<City, 'id'>): string => `city:${city.id}`
 
 const PLACE_KINDS: readonly PlaceKind[] = ['city', 'search', 'point', 'location']
 

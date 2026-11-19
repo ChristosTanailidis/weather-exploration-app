@@ -136,3 +136,9 @@ export function colorAt(ramp: ColorRamp, value: number): string {
   const mix = (a: number, b: number): number => a + (b - a) * t
   return rgbaString([mix(from[0], to[0]), mix(from[1], to[1]), mix(from[2], to[2]), mix(from[3], to[3])])
 }
+
+/** Colours of map symbols drawn on top of the basemap. Placeholders until the design pass. */
+export const MAP_COLORS = {
+  label: '#1f2937',
+  labelHalo: '#ffffff',
+} as const
