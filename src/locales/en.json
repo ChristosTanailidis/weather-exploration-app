@@ -150,5 +150,18 @@
     "east": "E",
     "west": "W",
     "near": "Near {name} · {km} km"
+  },
+  "location": {
+    "button": "My location",
+    "youAreHere": "You are here",
+    "deniedTitle": "Location access is off",
+    "deniedBody": "Allow location in your browser’s site settings, or search for your city instead.",
+    "searchAction": "Search a place",
+    "unavailableTitle": "Your location isn’t available",
+    "unavailableBody": "Your device didn’t share a position. Try again, or search for your city.",
+    "retry": "Try again"
+  },
+  "status": {
+    "dismiss": "Dismiss"
   }
 }

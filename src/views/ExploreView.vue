@@ -11,14 +11,27 @@
       <GridLayer v-if="config.enableGridLayer" />
       <CityLayer />
       <SelectionLayer />
+      <LocationMarker />
       <nav
-        v-if="isDesktop"
-        class="absolute top-22 left-6 z-(--z-controls) flex flex-col gap-3"
+        class="absolute top-[330px] right-3 z-(--z-controls) flex flex-col gap-3 lg:top-22 lg:right-auto lg:left-6"
         :aria-label="t('map.buttons')"
       >
-        <MapZoomButtons />
+        <div class="glass flex flex-col gap-0.5 rounded-lg p-1">
+          <MapButton
+            :label="t('location.button')"
+            :aria-busy="location.status.value === 'locating'"
+            @click="location.locate()"
+          >
+            <AppIcon
+              name="location"
+              :class="location.status.value === 'locating' && 'animate-pulse'"
+            />
+          </MapButton>
+        </div>
+        <MapZoomButtons v-if="isDesktop" />
       </nav>
     </MapView>
+    <StatusSlot class="absolute inset-x-3 top-[162px] z-(--z-toast) lg:top-22 lg:right-auto lg:left-102 lg:max-w-146" />
     <div class="absolute inset-x-3 top-14 z-(--z-popover) lg:top-6 lg:right-auto lg:left-6 lg:w-90">
       <SearchBox @select="openSearchResult" />
     </div>
@@ -30,20 +43,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CityLayer from '@/components/map/CityLayer.vue'
 import GridLayer from '@/components/map/GridLayer.vue'
 import LayerSwitcher from '@/components/map/LayerSwitcher.vue'
 import MapView from '@/components/map/MapView.vue'
+import LocationMarker from '@/components/map/LocationMarker.vue'
+import MapButton from '@/components/map/MapButton.vue'
 import MapZoomButtons from '@/components/map/MapZoomButtons.vue'
 import SelectionLayer from '@/components/map/SelectionLayer.vue'
 import TimeSlider from '@/components/map/TimeSlider.vue'
 import WeatherLegend from '@/components/map/WeatherLegend.vue'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
+import AppIcon from '@/components/ui/AppIcon.vue'
 import RequestCounter from '@/components/ui/RequestCounter.vue'
 import SearchBox from '@/components/ui/SearchBox.vue'
+import StatusSlot from '@/components/ui/StatusSlot.vue'
 import { useCities } from '@/composables/useCities'
+import { useCurrentLocation } from '@/composables/useCurrentLocation'
 import { useIsDesktop } from '@/composables/useLayout'
 import { useUrlState } from '@/composables/useUrlState'
 import { config, env } from '@/config'
@@ -65,6 +83,13 @@ useUrlState({
     precision: config.coordPrecision,
     maxKm: config.nearestCityMaxKm,
   }),
+})
+
+const location = useCurrentLocation()
+onMounted(() => {
+  if (env.mapboxToken) {
+    void location.autoLocate()
+  }
 })
 
 /** Opens a search result: select it (details panel) and fly there. */

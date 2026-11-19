@@ -208,6 +208,7 @@ import AppIcon from '@/components/ui/AppIcon.vue'
 import FlagIcon from '@/components/ui/FlagIcon.vue'
 import { useIsDesktop } from '@/composables/useLayout'
 import { usePlaceSearch } from '@/composables/usePlaceSearch'
+import { useSearchFocus } from '@/composables/useSearchFocus'
 import { highlightMatch } from '@/domain/search'
 import type { SearchResult } from '@/domain/types'
 
@@ -236,6 +237,11 @@ const region = (result: SearchResult): string =>
 
 watch(state, () => {
   active.value = -1
+})
+
+const { requests: focusRequests } = useSearchFocus()
+watch(focusRequests, () => {
+  input.value?.focus()
 })
 
 function close(): void {

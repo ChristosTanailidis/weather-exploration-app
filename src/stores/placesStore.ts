@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 import { config } from '@/config'
 import { sanitizePlaces } from '@/domain/places'
 import type { Place } from '@/domain/types'
@@ -23,6 +23,8 @@ export const usePlacesStore = defineStore('places', () => {
     serializer: { read: readPlaces, write: places => JSON.stringify(places) },
   })
   const compareKeys = ref<string[]>([])
+  /** The user's position as a place, once located. Never persisted. */
+  const currentLocation = shallowRef<Place | null>(null)
 
   const savedKeys = computed(() => new Set(collection.value.map(place => place.key)))
   const comparePlaces = computed(() =>
@@ -89,10 +91,15 @@ export const usePlacesStore = defineStore('places', () => {
     compareKeys.value = []
   }
 
+  function setCurrentLocation(place: Place | null): void {
+    currentLocation.value = place
+  }
+
   return {
     selected,
     collection,
     compareKeys,
+    currentLocation,
     comparePlaces,
     canCompare,
     select,
@@ -103,5 +110,6 @@ export const usePlacesStore = defineStore('places', () => {
     move,
     toggleCompare,
     clearCompare,
+    setCurrentLocation,
   }
 })

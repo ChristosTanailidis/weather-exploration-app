@@ -32,6 +32,11 @@ export const config = {
   gridOpacity: 0.45,
   maxLocationsPerRequest: 100,
   nearestCityMaxKm: 50,
+  /** Geolocation: a coarse position is enough; reuse one up to 10 min old. */
+  locationTimeoutMs: 10_000,
+  locationMaxAgeMs: 10 * 60_000,
+  /** Success messages in the status slot hide after this; errors stay. */
+  statusAutoHideMs: 5_000,
   forecastHours: 48,
   /** How often the clock behind "now" is refreshed. */
   clockTickMs: 60_000,
