@@ -1,0 +1,33 @@
+{
+  "results": [
+    {
+      "id": 734077,
+      "name": "Thessaloniki",
+      "latitude": 40.64072,
+      "longitude": 22.93493,
+      "elevation": -9999.0,
+      "feature_code": "PPLA",
+      "country_code": "GR",
+      "admin1_id": 6697801,
+      "timezone": "Europe/Athens",
+      "population": 317778,
+      "country_id": 390903,
+      "country": "Greece",
+      "admin1": "Central Macedonia"
+    },
+    {
+      "id": 6164831,
+      "name": "Thessalon",
+      "latitude": 46.25006,
+      "longitude": -83.5666,
+      "elevation": 175.0,
+      "feature_code": "PPL",
+      "country_code": "CA",
+      "timezone": "America/Toronto",
+      "population": 1175,
+      "country": "Canada",
+      "admin1": "Ontario"
+    }
+  ],
+  "generationtime_ms": 0.16903877
+}
