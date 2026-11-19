@@ -119,5 +119,30 @@
     "ahead": "+{n} h from now",
     "valueNow": "{time}, now",
     "valueAhead": "{time}, {n} hour from now | {time}, {n} hours from now"
+  },
+  "search": {
+    "label": "Search places",
+    "placeholder": "Search cities and places",
+    "placeholderShort": "Search places",
+    "clear": "Clear search",
+    "close": "Close search",
+    "results": "Search results",
+    "loadingResults": "Loading results",
+    "shortcut": "/",
+    "hintTitle": "Keep typing",
+    "hint": "Enter at least 2 letters to search places.",
+    "searching": "Searching…",
+    "emptyTitle": "No places match “{query}”",
+    "empty": "Check the spelling, or try a nearby larger city. You can also click anywhere on the map.",
+    "errorTitle": "Search isn’t available right now",
+    "error": "The place search service didn’t respond. Your map and saved places still work.",
+    "retry": "Try again",
+    "keyMove": "move",
+    "keyOpen": "open",
+    "keyClose": "close",
+    "region": "{admin1} · {country}"
+  },
+  "place": {
+    "flag": "Flag of {country}"
   }
 }

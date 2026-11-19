@@ -43,6 +43,7 @@
   --color-tick-strong: rgb(255 255 255 / 0.55);
   --color-night: rgb(120 140 190 / 0.10);
   --color-scrim: rgb(0 0 0 / 0.25);
+  --color-surface-panel-solid: #0F1726;
 
 
   --text-display-xl: 68px;
@@ -158,6 +159,11 @@
 
   button:disabled {
     cursor: not-allowed;
+  }
+
+  /* Search inputs bring their own clear button. */
+  input[type='search']::-webkit-search-cancel-button {
+    appearance: none;
   }
 
   :focus-visible {

@@ -1,6 +1,7 @@
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { ref, shallowRef } from 'vue'
+import type { LatLon } from '@/domain/types'
 import { config } from '@/config'
 import type { Bounds } from '@/domain/geo'
 import { LAYER_IDS } from '@/domain/types'
@@ -31,6 +32,9 @@ export const useMapStore = defineStore('map', () => {
   const bounds = shallowRef<Bounds | null>(null)
   /** Hours ahead of the current hour, 0 … forecastHours - 1. */
   const timeIndex = ref(0)
+  /** Latest request to move the camera; the map view animates to it. */
+  const cameraRequest = shallowRef<(LatLon & { zoom?: number, id: number }) | null>(null)
+  let nextRequestId = 0
 
   function setView(next: MapView): void {
     view.value = { ...next }
@@ -49,5 +53,23 @@ export const useMapStore = defineStore('map', () => {
     timeIndex.value = Math.min(max, Math.max(0, Math.round(Number.isFinite(index) ? index : 0)))
   }
 
-  return { view, bounds, activeLayer, timeIndex, setView, setBounds, setLayer, setTimeIndex, DEFAULT_LAYER }
+  /** Asks the map to fly to `target`, optionally zooming in to at least `zoom`. */
+  function flyTo(target: LatLon, zoom?: number): void {
+    nextRequestId += 1
+    cameraRequest.value = { lat: target.lat, lon: target.lon, zoom, id: nextRequestId }
+  }
+
+  return {
+    view,
+    bounds,
+    activeLayer,
+    timeIndex,
+    cameraRequest,
+    setView,
+    setBounds,
+    setLayer,
+    setTimeIndex,
+    flyTo,
+    DEFAULT_LAYER,
+  }
 })

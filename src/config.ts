@@ -39,6 +39,9 @@ export const config = {
   coordPrecision: 2,
   mapStyle: 'mapbox://styles/mapbox/dark-v11',
   defaultView: { lat: 30, lon: 15, zoom: 1.5 },
+  /** Zoom used when flying to a place (never zooms out). */
+  placeZoom: 7,
+  flyDurationMs: 1_200,
   maxZoom: 22,
   compareMin: 2,
   compareMax: 4,

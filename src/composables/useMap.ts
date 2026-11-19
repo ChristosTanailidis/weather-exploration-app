@@ -104,6 +104,19 @@ export function useMap(container: Readonly<ShallowRef<HTMLElement | null>>): Map
     map.value?.setPadding(padding())
   })
 
+  // Non-essential animation: Mapbox turns it into a jump with reduced motion.
+  watch(() => store.cameraRequest, (request) => {
+    if (!request || !map.value) {
+      return
+    }
+    map.value.flyTo({
+      center: [request.lon, request.lat],
+      zoom: request.zoom === undefined ? map.value.getZoom() : Math.max(map.value.getZoom(), request.zoom),
+      duration: config.flyDurationMs,
+      essential: false,
+    })
+  })
+
   // After children have unmounted, so layer components can clean up first.
   onUnmounted(() => {
     styleReady.value = false

@@ -10,6 +10,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    // Flags are fetched one by one when shown, never inlined into the bundle.
+    assetsInlineLimit: (filePath: string) => (filePath.includes('flag-icons') ? false : undefined),
+  },
   define: {
     __VUE_I18N_FULL_INSTALL__: true,
     __VUE_I18N_LEGACY_API__: false,

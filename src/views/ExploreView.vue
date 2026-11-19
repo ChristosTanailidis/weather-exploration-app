@@ -18,6 +18,9 @@
         <MapZoomButtons />
       </nav>
     </MapView>
+    <div class="absolute inset-x-3 top-14 z-(--z-popover) lg:top-6 lg:right-auto lg:left-6 lg:w-90">
+      <SearchBox @select="openSearchResult" />
+    </div>
     <LayerSwitcher class="absolute inset-x-3 top-[114px] z-(--z-controls) lg:top-6 lg:right-auto lg:left-102" />
     <WeatherLegend class="absolute inset-x-3 bottom-34 z-(--z-controls) lg:right-auto lg:left-6 lg:w-80" />
     <TimeSlider class="absolute inset-x-3 bottom-6 z-(--z-controls) lg:right-(--drawer-zone) lg:left-6" />
@@ -26,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CityLayer from '@/components/map/CityLayer.vue'
 import GridLayer from '@/components/map/GridLayer.vue'
@@ -36,12 +40,29 @@ import TimeSlider from '@/components/map/TimeSlider.vue'
 import WeatherLegend from '@/components/map/WeatherLegend.vue'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
 import RequestCounter from '@/components/ui/RequestCounter.vue'
+import SearchBox from '@/components/ui/SearchBox.vue'
+import { useCities } from '@/composables/useCities'
 import { useIsDesktop } from '@/composables/useLayout'
 import { useUrlState } from '@/composables/useUrlState'
 import { config, env } from '@/config'
+import { placeFromSearchResult } from '@/domain/search'
+import type { SearchResult } from '@/domain/types'
+import { useMapStore } from '@/stores/mapStore'
+import { usePlacesStore } from '@/stores/placesStore'
 
 const { t } = useI18n()
 const isDesktop = useIsDesktop()
+const map = useMapStore()
+const places = usePlacesStore()
+const { cities } = useCities()
+const cityIds = computed(() => new Set(cities.value.map(city => city.id)))
 
 useUrlState()
+
+/** Opens a search result: select it (details panel) and fly there. */
+function openSearchResult(result: SearchResult): void {
+  const place = placeFromSearchResult(result, id => cityIds.value.has(id), config.coordPrecision)
+  places.select(place)
+  map.flyTo(place, config.placeZoom)
+}
 </script>
