@@ -200,6 +200,13 @@ describe('snapGrid', () => {
     expect(cells.some(cell => cell.lat === 7.5 && cell.lon === 7.5)).toBe(true)
   })
 
+  it('keeps the cells nearest a given centre', () => {
+    const bounds: Bounds = { west: -180, south: -90, east: 180, north: 90 }
+    const cells = snapGrid(bounds, 0, { maxPoints: 10, center: { lat: 40, lon: 120 } })
+    expect(cells).toHaveLength(10)
+    expect(cells.every(cell => Math.abs(cell.lon - 120) <= 45 && Math.abs(cell.lat - 40) <= 30)).toBe(true)
+  })
+
   it('handles bounds that cross the antimeridian', () => {
     const expected = snapGrid({ west: 170, south: -10, east: 190, north: 10 }, 3, { maxPoints: 80 })
     const crossing = snapGrid({ west: 170, south: -10, east: -170, north: 10 }, 3, { maxPoints: 80 })

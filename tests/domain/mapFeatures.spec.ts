@@ -3,6 +3,7 @@ import {
   HOUR_SEC,
   WIND_ARROW_IMAGE,
   buildCityFeatures,
+  buildGridFeatures,
   hourIndexAt,
   hourStartSec,
   layerValue,
@@ -128,5 +129,37 @@ describe('buildCityFeatures', () => {
   it('leaves out cities whose data does not cover the instant', () => {
     const data = new Map([['city:264371', { data: series() }]])
     expect(buildCityFeatures([athens], data, { layer: 'temperature', instantSec: T0 - 5 * HOUR_SEC, label }).features).toEqual([])
+  })
+})
+
+describe('buildGridFeatures', () => {
+  const keyOf = (cell: { lat: number, lon: number }) => `pt:${cell.lat},${cell.lon}`
+
+  it('builds a closed square per cell with the layer value', () => {
+    const cell = { lat: 7.5, lon: 22.5, stepDeg: 15 }
+    const data = new Map([[keyOf(cell), { data: series() }]])
+    expect(buildGridFeatures([cell], data, { layer: 'clouds', instantSec: T0 + HOUR_SEC, keyOf })).toEqual({
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        geometry: { type: 'Polygon', coordinates: [[[15, 0], [30, 0], [30, 15], [15, 15], [15, 0]]] },
+        properties: { value: 80 },
+      }],
+    })
+  })
+
+  it('clamps cells at the poles', () => {
+    const cell = { lat: 85, lon: 0, stepDeg: 15 }
+    const data = new Map([[keyOf(cell), { data: series() }]])
+    const ring = buildGridFeatures([cell], data, { layer: 'temperature', instantSec: T0, keyOf }).features[0]?.geometry.coordinates[0]
+    expect(Math.max(...(ring ?? []).map(([, lat]) => lat))).toBe(90)
+  })
+
+  it('leaves out cells without data or without a value', () => {
+    const withNull = { lat: 1, lon: 1, stepDeg: 1 }
+    const without = { lat: 2, lon: 2, stepDeg: 1 }
+    const data = new Map([[keyOf(withNull), { data: series() }]])
+    const result = buildGridFeatures([withNull, without], data, { layer: 'temperature', instantSec: T0 + 2 * HOUR_SEC, keyOf })
+    expect(result.features).toEqual([])
   })
 })

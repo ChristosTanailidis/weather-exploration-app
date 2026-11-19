@@ -1,4 +1,5 @@
 import { cityKey } from '@/domain/places'
+import type { GridCell } from '@/domain/geo'
 import type { City, HourlySeries, LayerId, LatLon } from '@/domain/types'
 import { describeWeather } from '@/domain/wmo'
 
@@ -128,6 +129,57 @@ export function buildCityFeatures(
       id: city.id,
       geometry: point(city),
       properties: { id: city.id, name: city.name, population: city.population, ...symbol },
+    })
+  }
+  return { type: 'FeatureCollection', features }
+}
+
+export interface PolygonFeature<P> {
+  type: 'Feature'
+  geometry: { type: 'Polygon', coordinates: [number, number][][] }
+  properties: P
+}
+
+export interface GridFeatureProps {
+  /** Layer value in metric base units. */
+  value: number
+}
+
+export interface GridOptions {
+  layer: LayerId
+  instantSec: number
+  /** Cache key of a cell (the same key used to fetch it). */
+  keyOf: (cell: GridCell) => string
+}
+
+const MAX_LAT = 90
+
+/** One square polygon per grid cell with a value at the instant; others are left out. */
+export function buildGridFeatures(
+  cells: readonly GridCell[],
+  data: ReadonlyMap<string, { data: HourlySeries }>,
+  options: GridOptions,
+): FeatureCollection<PolygonFeature<GridFeatureProps>> {
+  const features: PolygonFeature<GridFeatureProps>[] = []
+  for (const cell of cells) {
+    const series = data.get(options.keyOf(cell))?.data
+    const index = series ? hourIndexAt(series.timesSec, options.instantSec) : -1
+    const value = series && index >= 0 ? layerValue(series, options.layer, index) : null
+    if (value === null) {
+      continue
+    }
+    const half = cell.stepDeg / 2
+    const west = cell.lon - half
+    const east = cell.lon + half
+    const south = Math.max(-MAX_LAT, cell.lat - half)
+    const north = Math.min(MAX_LAT, cell.lat + half)
+    features.push({
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[[west, south], [east, south], [east, north], [west, north], [west, south]]],
+      },
+      properties: { value },
     })
   }
   return { type: 'FeatureCollection', features }

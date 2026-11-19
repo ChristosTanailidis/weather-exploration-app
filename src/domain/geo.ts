@@ -146,6 +146,8 @@ export interface SnapGridOptions {
   maxPoints: number
   /** Extra filter, e.g. "faces the camera"; applied before the cap. */
   isVisible?: (point: LatLon) => boolean
+  /** Where the cap keeps cells around; defaults to the centre of the bounds. */
+  center?: LatLon
 }
 
 function cellsFor(bounds: Bounds, stepDeg: number, isVisible: (point: LatLon) => boolean): GridCell[] {
@@ -187,7 +189,8 @@ function cellsFor(bounds: Bounds, stepDeg: number, isVisible: (point: LatLon) =>
 /**
  * Cell centres of a global lat/lon lattice covering `bounds`. The step comes
  * from the zoom level and gets coarser until at most `maxPoints` cells remain;
- * at the coarsest step the cells nearest the centre of the bounds are kept.
+ * at the coarsest step the cells nearest the centre (of the bounds, or
+ * `options.center`) are kept.
  * Centres sit on a fixed lattice, so overlapping views share points and
  * therefore cache entries. Handles bounds that cross the antimeridian.
  */
@@ -202,7 +205,7 @@ export function snapGrid(bounds: Bounds, zoom: number, options: SnapGridOptions)
       return cells
     }
   }
-  const center = boundsCenter(bounds)
+  const center = options.center ?? boundsCenter(bounds)
   return cells
     .map(cell => ({ cell, angle: centralAngleDeg(cell, center) }))
     .sort((a, b) => a.angle - b.angle)

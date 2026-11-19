@@ -8,6 +8,7 @@
       {{ t('app.title') }}
     </h1>
     <MapView>
+      <GridLayer v-if="config.enableGridLayer" />
       <CityLayer />
     </MapView>
     <MapControls>
@@ -30,6 +31,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import CityLayer from '@/components/map/CityLayer.vue'
+import GridLayer from '@/components/map/GridLayer.vue'
 import LayerSwitcher from '@/components/map/LayerSwitcher.vue'
 import MapControls from '@/components/map/MapControls.vue'
 import MapView from '@/components/map/MapView.vue'
@@ -38,7 +40,7 @@ import WeatherLegend from '@/components/map/WeatherLegend.vue'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
 import RequestCounter from '@/components/ui/RequestCounter.vue'
 import { useUrlState } from '@/composables/useUrlState'
-import { env } from '@/config'
+import { config, env } from '@/config'
 
 const { t } = useI18n()
 

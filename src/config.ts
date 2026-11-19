@@ -25,6 +25,7 @@ export const config = {
   thinningGrid: { cols: 8, rows: 6 },
   enableGridLayer: true,
   gridMaxPoints: 80,
+  gridOpacity: 0.45,
   maxLocationsPerRequest: 100,
   nearestCityMaxKm: 50,
   forecastHours: 48,
