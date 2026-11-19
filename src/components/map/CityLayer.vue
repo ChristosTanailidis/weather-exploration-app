@@ -9,6 +9,7 @@ import { computed, onBeforeUnmount, watch } from 'vue'
 import { useForecastTime } from '@/composables/useForecastTime'
 import { useFormat } from '@/composables/useFormat'
 import { useIsDesktop } from '@/composables/useLayout'
+import { CITY_LAYER_IDS, SELECTED_POINT_LAYER_IDS } from '@/composables/mapLayers'
 import { useMapContext } from '@/composables/useMap'
 import { PILL_NONE_IMAGE, PILL_SAVED_IMAGE, PILL_SELECTED_IMAGE, loadMapImages } from '@/composables/useMapImages'
 import { useViewportWeather } from '@/composables/useViewportWeather'
@@ -22,11 +23,7 @@ import { usePlacesStore } from '@/stores/placesStore'
 type LabelKind = 'normal' | 'saved' | 'selected'
 
 const SOURCE_ID = 'cities'
-const LAYER_IDS: Readonly<Record<LabelKind, string>> = {
-  normal: 'city-weather',
-  saved: 'city-weather-saved',
-  selected: 'city-weather-selected',
-}
+const LAYER_IDS: Readonly<Record<LabelKind, string>> = CITY_LAYER_IDS
 const NAME_SCALE = 0.75
 const LETTER_SPACING_EM = -0.01
 const HALO_WIDTH_PX = 1.5
@@ -114,9 +111,11 @@ async function install(instance: mapboxgl.Map): Promise<void> {
   if (!instance.getSource(SOURCE_ID)) {
     instance.addSource(SOURCE_ID, { type: 'geojson', data: features.value })
   }
+  // Below the clicked-point marker, if it is already there.
+  const beforeId = instance.getLayer(SELECTED_POINT_LAYER_IDS.ring) ? SELECTED_POINT_LAYER_IDS.ring : undefined
   for (const kind of KINDS) {
     if (!instance.getLayer(LAYER_IDS[kind])) {
-      instance.addLayer(layerSpec(kind))
+      instance.addLayer(layerSpec(kind), beforeId)
     }
   }
 }

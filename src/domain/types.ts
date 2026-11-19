@@ -31,6 +31,8 @@ export interface Place extends LatLon {
   countryCode?: string
   admin1?: string
   country?: string
+  /** For a clicked point named after a nearby city: the distance to it. */
+  nearKm?: number
 }
 
 /** A value series aligned with `timesSec`; `null` where the API has no value. */

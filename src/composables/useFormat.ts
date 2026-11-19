@@ -1,5 +1,5 @@
 import { useI18n } from 'vue-i18n'
-import type { LayerId } from '@/domain/types'
+import type { LayerId, Place } from '@/domain/types'
 import { UNIT_SETS, displayPrecip, displaySpeed, displayTemp } from '@/domain/units'
 import { useSettingsStore } from '@/stores/settingsStore'
 
@@ -46,5 +46,25 @@ export function useFormat() {
     }
   }
 
-  return { temp, speed, precip, percent, layerLabel }
+  const COORD_DECIMALS = 2
+
+  /** "38.20°N, 24.10°E" */
+  function coords(lat: number, lon: number): string {
+    return t('place.coords', {
+      lat: Math.abs(lat).toFixed(COORD_DECIMALS),
+      ns: t(lat >= 0 ? 'place.north' : 'place.south'),
+      lon: Math.abs(lon).toFixed(COORD_DECIMALS),
+      ew: t(lon >= 0 ? 'place.east' : 'place.west'),
+    })
+  }
+
+  /** A place's title: its name, "Near Kozani · 12 km" for a clicked point, or its coordinates. */
+  function placeTitle(place: Place): string {
+    if (place.kind === 'point' && place.nearKm !== undefined && place.name) {
+      return t('place.near', { name: place.name, km: place.nearKm })
+    }
+    return place.name || coords(place.lat, place.lon)
+  }
+
+  return { temp, speed, precip, percent, layerLabel, coords, placeTitle }
 }

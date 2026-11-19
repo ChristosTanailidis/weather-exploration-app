@@ -202,6 +202,7 @@ export const MAP_COLORS = {
   placeholder: 'rgba(169, 180, 198, 0.55)',
   arrow: '#f4f7fb',
   arrowOutline: 'rgba(8, 16, 28, 0.9)',
+  pointFill: 'rgba(8, 16, 28, 0.9)',
   pointStroke: '#f4f7fb',
   pointCentre: '#f5b94a',
   graticule: 'rgba(255, 255, 255, 0.04)',

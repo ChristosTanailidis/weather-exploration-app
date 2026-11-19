@@ -10,6 +10,7 @@
     <MapView>
       <GridLayer v-if="config.enableGridLayer" />
       <CityLayer />
+      <SelectionLayer />
       <nav
         v-if="isDesktop"
         class="absolute top-22 left-6 z-(--z-controls) flex flex-col gap-3"
@@ -36,6 +37,7 @@ import GridLayer from '@/components/map/GridLayer.vue'
 import LayerSwitcher from '@/components/map/LayerSwitcher.vue'
 import MapView from '@/components/map/MapView.vue'
 import MapZoomButtons from '@/components/map/MapZoomButtons.vue'
+import SelectionLayer from '@/components/map/SelectionLayer.vue'
 import TimeSlider from '@/components/map/TimeSlider.vue'
 import WeatherLegend from '@/components/map/WeatherLegend.vue'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
@@ -45,6 +47,7 @@ import { useCities } from '@/composables/useCities'
 import { useIsDesktop } from '@/composables/useLayout'
 import { useUrlState } from '@/composables/useUrlState'
 import { config, env } from '@/config'
+import { placeFromKey } from '@/domain/places'
 import { placeFromSearchResult } from '@/domain/search'
 import type { SearchResult } from '@/domain/types'
 import { useMapStore } from '@/stores/mapStore'
@@ -54,10 +57,15 @@ const { t } = useI18n()
 const isDesktop = useIsDesktop()
 const map = useMapStore()
 const places = usePlacesStore()
-const { cities } = useCities()
+const { cities, ready } = useCities()
 const cityIds = computed(() => new Set(cities.value.map(city => city.id)))
 
-useUrlState()
+useUrlState({
+  resolvePlace: async key => placeFromKey(key, await ready(), {
+    precision: config.coordPrecision,
+    maxKm: config.nearestCityMaxKm,
+  }),
+})
 
 /** Opens a search result: select it (details panel) and fly there. */
 function openSearchResult(result: SearchResult): void {

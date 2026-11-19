@@ -143,6 +143,12 @@
     "region": "{admin1} · {country}"
   },
   "place": {
-    "flag": "Flag of {country}"
+    "flag": "Flag of {country}",
+    "coords": "{lat}°{ns}, {lon}°{ew}",
+    "north": "N",
+    "south": "S",
+    "east": "E",
+    "west": "W",
+    "near": "Near {name} · {km} km"
   }
 }
