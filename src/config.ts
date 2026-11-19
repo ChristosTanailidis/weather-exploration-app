@@ -18,3 +18,14 @@ export const config = {
   forecastDays: 7,
   coordPrecision: 2,
 } as const
+
+/** Values that come from the build environment. */
+export const env = {
+  mapboxToken: (import.meta.env.VITE_MAPBOX_TOKEN ?? '').trim(),
+} as const
+
+/** External links shown in the UI. `liveDemo` stays empty until the app is deployed. */
+export const links = {
+  mapboxSignup: 'https://account.mapbox.com/auth/signup/',
+  liveDemo: '',
+} as const

@@ -1,5 +1,23 @@
 {
   "app": {
     "title": "Weather Explorer"
+  },
+  "missingToken": {
+    "title": "Add a Mapbox token to see the map",
+    "intro": "The map is drawn with Mapbox, which needs a free access token. The weather data comes from Open-Meteo and needs no key.",
+    "steps": "Setup steps",
+    "stepAccount": "Create a free account at {link} and copy your default public token (it starts with {prefix}).",
+    "stepAccountLink": "mapbox.com",
+    "stepEnv": "In the project folder, copy {example} to {env} and paste the token after {variable}",
+    "stepRestart": "Restart the dev server with {command}",
+    "demo": "Just want to look around? {link}",
+    "demoLink": "Open the live demo",
+    "code": {
+      "prefix": "pk.",
+      "envExample": ".env.example",
+      "env": ".env",
+      "variable": "VITE_MAPBOX_TOKEN=",
+      "command": "npm run dev"
+    }
   }
 }
