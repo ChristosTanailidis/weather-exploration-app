@@ -100,3 +100,10 @@ export interface SearchResult extends LatLon {
   country: string
   admin1: string
 }
+
+/** State of an async load, as a discriminated union. */
+export type AsyncState<T> =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success', data: T }
+  | { status: 'error', error: unknown }

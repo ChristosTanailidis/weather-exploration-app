@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "type-check": "vue-tsc --build",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:cities": "node scripts/build-cities.ts"
   },
   "dependencies": {
     "@vueuse/core": "^15.0.0",
