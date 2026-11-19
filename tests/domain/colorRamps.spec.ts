@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { COLOR_RAMPS, colorAt, stopColor, toCssGradient, toInterpolateExpression } from '@/domain/colorRamps'
+import { COLOR_RAMPS, colorAt, legendTicks, stopColor, toCssGradient, toInterpolateExpression } from '@/domain/colorRamps'
 import type { ColorRamp } from '@/domain/colorRamps'
 import { LAYER_IDS } from '@/domain/types'
 
@@ -82,5 +82,31 @@ describe('colorAt', () => {
   it('interpolates between neighbouring stops', () => {
     expect(colorAt(sample, 5)).toBe('rgba(128, 128, 128, 0.75)')
     expect(colorAt(sample, 15)).toBe('rgba(255, 128, 128, 0.75)')
+  })
+})
+
+describe('legendTicks', () => {
+  it('labels every stop when there is room', () => {
+    expect(legendTicks(sample, 10)).toEqual([
+      { value: 0, positionPct: 0 },
+      { value: 10, positionPct: 50 },
+      { value: 20, positionPct: 100 },
+    ])
+  })
+
+  it('drops stops that would overlap and always keeps both ends', () => {
+    const ticks = legendTicks(COLOR_RAMPS.precipitation, 12)
+    expect(ticks[0]?.value).toBe(0)
+    expect(ticks[ticks.length - 1]?.value).toBe(20)
+    expect(ticks.map(t => t.value)).not.toContain(0.1)
+    ticks.slice(1).forEach((tick, i) => {
+      expect(tick.positionPct - (ticks[i]?.positionPct ?? 0)).toBeGreaterThanOrEqual(12)
+    })
+  })
+
+  it.each(LAYER_IDS)('works for the %s ramp', (layer) => {
+    const ticks = legendTicks(COLOR_RAMPS[layer], 12)
+    expect(ticks.length).toBeGreaterThanOrEqual(2)
+    expect(ticks[ticks.length - 1]?.positionPct).toBe(100)
   })
 })

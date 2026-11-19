@@ -11,8 +11,14 @@
       <CityLayer />
     </MapView>
     <MapControls>
+      <template #top-right>
+        <LayerSwitcher />
+      </template>
       <template #bottom-left>
-        <RequestCounter />
+        <div class="flex flex-col items-start gap-2">
+          <RequestCounter />
+          <WeatherLegend />
+        </div>
       </template>
     </MapControls>
   </main>
@@ -21,8 +27,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import CityLayer from '@/components/map/CityLayer.vue'
+import LayerSwitcher from '@/components/map/LayerSwitcher.vue'
 import MapControls from '@/components/map/MapControls.vue'
 import MapView from '@/components/map/MapView.vue'
+import WeatherLegend from '@/components/map/WeatherLegend.vue'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
 import RequestCounter from '@/components/ui/RequestCounter.vue'
 import { useUrlState } from '@/composables/useUrlState'

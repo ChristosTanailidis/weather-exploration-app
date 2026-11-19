@@ -35,7 +35,7 @@ const features = computed(() => buildCityFeatures(cities.value, weather.value, {
   label: layerLabel,
 }))
 
-const layer: SymbolLayerSpecification = {
+const layer = (): SymbolLayerSpecification => ({
   id: LAYER_ID,
   type: 'symbol',
   source: SOURCE_ID,
@@ -43,7 +43,7 @@ const layer: SymbolLayerSpecification = {
     'symbol-sort-key': ['*', -1, ['get', 'population']],
     'icon-image': ['get', 'icon'],
     'icon-rotate': ['get', 'rotation'],
-    'icon-rotation-alignment': 'viewport',
+    'icon-rotation-alignment': rotationAlignment.value,
     'text-field': [
       'step', ['zoom'],
       ['get', 'label'],
@@ -60,7 +60,7 @@ const layer: SymbolLayerSpecification = {
     'text-halo-color': MAP_COLORS.labelHalo,
     'text-halo-width': HALO_WIDTH,
   },
-}
+})
 
 async function install(instance: mapboxgl.Map): Promise<void> {
   await loadMapImages(instance)
@@ -68,7 +68,7 @@ async function install(instance: mapboxgl.Map): Promise<void> {
     instance.addSource(SOURCE_ID, { type: 'geojson', data: features.value })
   }
   if (!instance.getLayer(LAYER_ID)) {
-    instance.addLayer(layer)
+    instance.addLayer(layer())
   }
 }
 
@@ -80,6 +80,15 @@ watch(styleReady, (ready) => {
 
 watch(features, (data) => {
   map.value?.getSource<GeoJSONSource>(SOURCE_ID)?.setData(data)
+})
+
+/** Wind arrows point relative to north; weather icons stay upright on screen. */
+const rotationAlignment = computed(() => (store.activeLayer === 'wind' ? 'map' : 'viewport'))
+
+watch(rotationAlignment, (alignment) => {
+  if (map.value?.getLayer(LAYER_ID)) {
+    map.value.setLayoutProperty(LAYER_ID, 'icon-rotation-alignment', alignment)
+  }
 })
 
 onBeforeUnmount(() => {

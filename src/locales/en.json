@@ -60,13 +60,36 @@
     "in": "{value} in",
     "tempShort": "{value}°",
     "missing": "–",
-    "percent": "{value}%"
+    "percent": "{value}%",
+    "symbols": {
+      "celsius": "°C",
+      "fahrenheit": "°F",
+      "kmh": "km/h",
+      "mph": "mph",
+      "mm": "mm",
+      "in": "in",
+      "percent": "%"
+    }
   },
   "map": {
     "label": "Weather map",
     "controls": "Map controls"
   },
   "debug": {
-    "requests": "{requests} requests · {locations} locations"
+    "requests": "Requests: {requests} · Locations: {locations}"
+  },
+  "layers": {
+    "label": "Map layer",
+    "temperature": "Temperature",
+    "precipitation": "Precipitation",
+    "wind": "Wind",
+    "clouds": "Clouds"
+  },
+  "legend": {
+    "label": "Legend",
+    "temperature": "Temperature ({unit})",
+    "precipitation": "Precipitation ({unit} per hour)",
+    "wind": "Wind speed ({unit})",
+    "clouds": "Cloud cover ({unit})"
   }
 }

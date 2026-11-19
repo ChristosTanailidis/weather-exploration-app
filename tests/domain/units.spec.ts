@@ -71,10 +71,12 @@ describe('display values', () => {
 
 describe('unit sets', () => {
   it('has a translated format for every unit', () => {
-    const units = en.units as Record<string, string>
+    const units: Record<string, unknown> = en.units
+    const symbols: Record<string, unknown> = en.units.symbols
     for (const set of Object.values(UNIT_SETS)) {
       for (const unit of Object.values(set)) {
         expect(units[unit]).toContain('{value}')
+        expect(symbols[unit]).toEqual(expect.any(String))
       }
     }
   })

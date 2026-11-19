@@ -137,6 +137,35 @@ export function colorAt(ramp: ColorRamp, value: number): string {
   return rgbaString([mix(from[0], to[0]), mix(from[1], to[1]), mix(from[2], to[2]), mix(from[3], to[3])])
 }
 
+export interface LegendTick {
+  value: number
+  /** Position along the legend, 0–100. */
+  positionPct: number
+}
+
+/**
+ * Stops to label on a legend, keeping labels at least `minGapPct` apart.
+ * The first and last stops are always kept.
+ */
+export function legendTicks(ramp: ColorRamp, minGapPct: number): LegendTick[] {
+  const first = ramp.stops[0]?.value ?? 0
+  const last = ramp.stops[ramp.stops.length - 1]?.value ?? first
+  const span = last - first || 1
+  const all = ramp.stops.map(stop => ({ value: stop.value, positionPct: ((stop.value - first) / span) * PERCENT }))
+  const ticks: LegendTick[] = []
+  for (const tick of all) {
+    const previous = ticks[ticks.length - 1]
+    const isLast = tick === all[all.length - 1]
+    if (!previous || tick.positionPct - previous.positionPct >= minGapPct) {
+      ticks.push(tick)
+    }
+    else if (isLast && ticks.length > 1) {
+      ticks[ticks.length - 1] = tick
+    }
+  }
+  return ticks
+}
+
 /** Colours of map symbols drawn on top of the basemap. Placeholders until the design pass. */
 export const MAP_COLORS = {
   label: '#1f2937',
