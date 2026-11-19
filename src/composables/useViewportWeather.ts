@@ -25,6 +25,7 @@ export function useViewportWeather() {
   const visibleCities = shallowRef<readonly City[]>([])
   const weather = shallowRef<ReadonlyMap<string, Cached<HourlySeries>>>(new Map())
   const error = shallowRef<unknown>(undefined)
+  const loading = shallowRef(false)
 
   function pickCities(): City[] {
     const instance = map.value
@@ -49,9 +50,15 @@ export function useViewportWeather() {
     if (picked.length === 0) {
       return
     }
-    const result = await weatherService.getOverview(picked.map(city => ({ key: cityKey(city), lat: city.lat, lon: city.lon })))
-    weather.value = new Map([...weather.value, ...result.entries])
-    error.value = result.error
+    loading.value = true
+    try {
+      const result = await weatherService.getOverview(picked.map(city => ({ key: cityKey(city), lat: city.lat, lon: city.lon })))
+      weather.value = new Map([...weather.value, ...result.entries])
+      error.value = result.error
+    }
+    finally {
+      loading.value = false
+    }
   }
 
   watch([() => store.bounds, cities], () => {
@@ -69,5 +76,5 @@ export function useViewportWeather() {
     }
   })
 
-  return { cities: visibleCities, weather, error, refresh }
+  return { cities: visibleCities, weather, error, loading, refresh }
 }

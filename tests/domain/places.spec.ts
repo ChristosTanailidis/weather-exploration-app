@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isPlace, sanitizePlaces } from '@/domain/places'
+import { cityIdOf, cityKey, isPlace, sanitizePlaces } from '@/domain/places'
 
 const athens = { key: 'city:264371', kind: 'city', name: 'Athens', lat: 37.98, lon: 23.73, countryCode: 'GR' }
 
@@ -31,5 +31,17 @@ describe('sanitizePlaces', () => {
   it('returns an empty list for non-arrays', () => {
     expect(sanitizePlaces({})).toEqual([])
     expect(sanitizePlaces(null)).toEqual([])
+  })
+})
+
+describe('city keys', () => {
+  it('round-trips a city id', () => {
+    expect(cityKey({ id: 264371 })).toBe('city:264371')
+    expect(cityIdOf('city:264371')).toBe(264371)
+  })
+
+  it('returns null for other keys', () => {
+    expect(cityIdOf('pt:1.00,2.00')).toBeNull()
+    expect(cityIdOf('city:abc')).toBeNull()
   })
 })

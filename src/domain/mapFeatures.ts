@@ -17,7 +17,20 @@ const HALF_TURN_DEG = 180
 
 /** Prefix of every image the app registers on the map. */
 export const MAP_IMAGE_PREFIX = 'wx-'
-export const WIND_ARROW_IMAGE = `${MAP_IMAGE_PREFIX}arrow`
+/** Grey dot-and-bar shown for cities whose weather is still loading. */
+export const PLACEHOLDER_IMAGE = `${MAP_IMAGE_PREFIX}placeholder`
+
+const WIND_ARROW_STEP_DEG = 22.5
+const WIND_ARROW_COUNT = 16
+
+/** Angles of the pre-rotated wind arrow sprites (icons inside text can't be rotated). */
+export const WIND_ARROW_ANGLES: readonly number[] = Array.from({ length: WIND_ARROW_COUNT }, (_, i) => Math.round(i * WIND_ARROW_STEP_DEG))
+
+/** Sprite name for an arrow pointing `toDeg` (clockwise from north). */
+export function windArrowImage(toDeg: number): string {
+  const step = ((Math.round(toDeg / WIND_ARROW_STEP_DEG) % WIND_ARROW_COUNT) + WIND_ARROW_COUNT) % WIND_ARROW_COUNT
+  return `${MAP_IMAGE_PREFIX}wind-arrow-${WIND_ARROW_ANGLES[step] ?? 0}`
+}
 
 export interface PointFeature<P> {
   type: 'Feature'
@@ -68,10 +81,11 @@ export interface CityFeatureProps {
   /** Layer value in metric base units, or `null` when missing. */
   value: number | null
   label: string
+  /** Map image drawn in front of the label (weather icon or wind arrow). */
   icon: string
-  /** Icon rotation in degrees (wind arrows point where the wind blows to). */
-  rotation: number
   population: number
+  /** `true` while the city's weather is still loading. */
+  loading: boolean
 }
 
 export interface SymbolOptions {
@@ -79,13 +93,14 @@ export interface SymbolOptions {
   instantSec: number
   /** Formats a layer value for display; receives `null` for missing values. */
   label: (value: number | null, layer: LayerId) => string
+  /** Show placeholders for cities without data (while a request is running). */
+  loading?: boolean
 }
 
 interface Symbol {
   value: number | null
   label: string
   icon: string
-  rotation: number
 }
 
 /** Icon, rotation, value and label for one location at an instant; `null` without data. */
@@ -98,20 +113,19 @@ export function symbolAt(series: HourlySeries, options: SymbolOptions): Symbol |
   const label = options.label(value, options.layer)
   if (options.layer === 'wind') {
     const fromDeg = series.windDirDeg[index]
-    return {
-      value,
-      label,
-      icon: WIND_ARROW_IMAGE,
-      rotation: fromDeg == null ? 0 : (fromDeg + HALF_TURN_DEG) % FULL_TURN_DEG,
-    }
+    const icon = fromDeg == null ? PLACEHOLDER_IMAGE : windArrowImage((fromDeg + HALF_TURN_DEG) % FULL_TURN_DEG)
+    return { value, label, icon }
   }
   const weather = describeWeather(series.weatherCode[index], series.isDay[index] ?? true)
-  return { value, label, icon: `${MAP_IMAGE_PREFIX}${weather.icon}`, rotation: 0 }
+  return { value, label, icon: `${MAP_IMAGE_PREFIX}${weather.icon}` }
 }
 
 const point = (place: LatLon): PointFeature<never>['geometry'] => ({ type: 'Point', coordinates: [place.lon, place.lat] })
 
-/** City symbols for the map; cities without data at the instant are left out. */
+/**
+ * City symbols for the map. Cities without data at the instant are left out,
+ * or shown as placeholders while `options.loading` is set.
+ */
 export function buildCityFeatures(
   cities: readonly City[],
   data: ReadonlyMap<string, { data: HourlySeries }>,
@@ -120,15 +134,21 @@ export function buildCityFeatures(
   const features: PointFeature<CityFeatureProps>[] = []
   for (const city of cities) {
     const series = data.get(cityKey(city))?.data
-    const symbol = series && symbolAt(series, options)
-    if (!symbol) {
+    const symbol = series ? symbolAt(series, options) : null
+    if (!symbol && !options.loading) {
       continue
     }
     features.push({
       type: 'Feature',
       id: city.id,
       geometry: point(city),
-      properties: { id: city.id, name: city.name, population: city.population, ...symbol },
+      properties: {
+        id: city.id,
+        name: city.name,
+        population: city.population,
+        loading: !symbol,
+        ...(symbol ?? { value: null, label: '', icon: PLACEHOLDER_IMAGE }),
+      },
     })
   }
   return { type: 'FeatureCollection', features }

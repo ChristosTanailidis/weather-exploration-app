@@ -1,7 +1,7 @@
 <template>
   <p
     v-if="visible"
-    class="rounded bg-surface/90 px-2 py-1 font-mono text-xs text-ink-muted shadow"
+    class="glass rounded-sm px-2 py-1 font-mono text-micro text-text-secondary"
     role="status"
   >
     {{ t('debug.requests', { requests: stats.requests, locations: stats.locations }) }}

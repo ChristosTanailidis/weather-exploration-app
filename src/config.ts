@@ -16,12 +16,16 @@ export const config = {
   /** Cities this close to the globe's horizon are skipped. */
   hemisphereMarginDeg: 5,
   /** Map icon bitmap size; drawn at half size on screen (pixel ratio 2). */
-  mapIconPx: 64,
+  mapIconPx: 56,
   mapIconPixelRatio: 2,
   /** From this zoom on, city labels also show the city name. */
-  cityNameMinZoom: 4,
-  /** Minimum distance between legend labels, in % of the legend width. */
-  legendMinTickGapPct: 15,
+  cityNameMinZoom: 6,
+  labelTextSizeDesktop: 15,
+  labelTextSizeMobile: 14,
+  /** Desktop layout (drawer instead of bottom sheet), Tailwind `lg`. */
+  desktopMediaQuery: '(min-width: 64rem)',
+  /** Right strip kept free for the drawer on desktop; the camera centres in the rest. */
+  drawerZonePx: 424,
   thinningGrid: { cols: 8, rows: 6 },
   enableGridLayer: true,
   gridMaxPoints: 80,
@@ -33,7 +37,7 @@ export const config = {
   clockTickMs: 60_000,
   forecastDays: 7,
   coordPrecision: 2,
-  mapStyle: 'mapbox://styles/mapbox/light-v11',
+  mapStyle: 'mapbox://styles/mapbox/dark-v11',
   defaultView: { lat: 30, lon: 15, zoom: 1.5 },
   maxZoom: 22,
   compareMin: 2,
@@ -47,6 +51,6 @@ export const env = {
 
 /** External links shown in the UI. `liveDemo` stays empty until the app is deployed. */
 export const links = {
-  mapboxSignup: 'https://account.mapbox.com/auth/signup/',
+  mapboxGuide: 'https://docs.mapbox.com/help/getting-started/access-tokens/',
   liveDemo: '',
 } as const

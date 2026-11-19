@@ -1,7 +1,18 @@
 import type { City, Place, PlaceKind } from '@/domain/types'
 
+const CITY_PREFIX = 'city:'
+
 /** Cache key and place key of a dataset city. */
-export const cityKey = (city: Pick<City, 'id'>): string => `city:${city.id}`
+export const cityKey = (city: Pick<City, 'id'>): string => `${CITY_PREFIX}${city.id}`
+
+/** The dataset id in a city key, or `null` for any other key. */
+export function cityIdOf(key: string): number | null {
+  if (!key.startsWith(CITY_PREFIX)) {
+    return null
+  }
+  const id = Number(key.slice(CITY_PREFIX.length))
+  return Number.isInteger(id) ? id : null
+}
 
 const PLACE_KINDS: readonly PlaceKind[] = ['city', 'search', 'point', 'location']
 

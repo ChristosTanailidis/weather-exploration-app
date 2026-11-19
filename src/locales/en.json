@@ -3,21 +3,17 @@
     "title": "Weather Explorer"
   },
   "missingToken": {
-    "title": "Add a Mapbox token to see the map",
-    "intro": "The map is drawn with Mapbox, which needs a free access token. The weather data comes from Open-Meteo and needs no key.",
+    "title": "The map needs a Mapbox token",
+    "intro": "This copy is running without a Mapbox access token, so the globe can’t be drawn. Add one to run it locally, or open the live demo.",
     "steps": "Setup steps",
-    "stepAccount": "Create a free account at {link} and copy your default public token (it starts with {prefix}).",
-    "stepAccountLink": "mapbox.com",
-    "stepEnv": "In the project folder, copy {example} to {env} and paste the token after {variable}",
-    "stepRestart": "Restart the dev server with {command}",
-    "demo": "Just want to look around? {link}",
-    "demoLink": "Open the live demo",
+    "stepToken": "Create a public token in your Mapbox account.",
+    "stepEnv": "Add it to {file}:",
+    "stepRestart": "Restart the dev server.",
+    "demo": "Open the live demo",
+    "guide": "Mapbox token guide",
     "code": {
-      "prefix": "pk.",
-      "envExample": ".env.example",
-      "env": ".env",
-      "variable": "VITE_MAPBOX_TOKEN=",
-      "command": "npm run dev"
+      "file": ".env",
+      "line": "VITE_MAPBOX_TOKEN=pk.your-token-here"
     }
   },
   "weather": {
@@ -69,11 +65,14 @@
       "mm": "mm",
       "in": "in",
       "percent": "%"
-    }
+    },
+    "label": "Units"
   },
   "map": {
     "label": "Weather map",
-    "controls": "Map controls"
+    "buttons": "Map controls",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
   },
   "debug": {
     "requests": "Requests: {requests} · Locations: {locations}"
@@ -83,20 +82,42 @@
     "temperature": "Temperature",
     "precipitation": "Precipitation",
     "wind": "Wind",
-    "clouds": "Clouds"
+    "clouds": "Clouds",
+    "short": {
+      "temperature": "Temp",
+      "precipitation": "Precip.",
+      "wind": "Wind",
+      "clouds": "Clouds"
+    },
+    "chip": {
+      "temperature": "Temp",
+      "precipitation": "Rain",
+      "wind": "Wind",
+      "clouds": "Clouds"
+    }
   },
   "legend": {
     "label": "Legend",
-    "temperature": "Temperature ({unit})",
-    "precipitation": "Precipitation ({unit} per hour)",
-    "wind": "Wind speed ({unit})",
-    "clouds": "Cloud cover ({unit})"
+    "unit": {
+      "celsius": "°C",
+      "fahrenheit": "°F",
+      "mmPerHour": "mm/h",
+      "inPerHour": "in/h",
+      "kmh": "km/h",
+      "mph": "mph",
+      "cover": "% cover"
+    },
+    "tick": {
+      "degrees": "{value}°",
+      "percent": "{value}%",
+      "plain": "{value}"
+    }
   },
   "time": {
     "label": "Forecast time",
     "now": "Now",
-    "backToNow": "Back to now",
-    "selected": "{time}, in {hours} h",
-    "nowAt": "Now, {time}"
+    "ahead": "+{n} h from now",
+    "valueNow": "{time}, now",
+    "valueAhead": "{time}, {n} hour from now | {time}, {n} hours from now"
   }
 }

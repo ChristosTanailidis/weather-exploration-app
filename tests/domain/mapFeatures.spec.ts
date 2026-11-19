@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import {
   HOUR_SEC,
-  WIND_ARROW_IMAGE,
+  PLACEHOLDER_IMAGE,
+  WIND_ARROW_ANGLES,
   buildCityFeatures,
   buildGridFeatures,
   hourIndexAt,
   hourStartSec,
   layerValue,
   symbolAt,
+  windArrowImage,
 } from '@/domain/mapFeatures'
 import type { SymbolOptions } from '@/domain/mapFeatures'
 import type { City, HourlySeries } from '@/domain/types'
@@ -80,15 +82,15 @@ describe('layerValue', () => {
 describe('symbolAt', () => {
   it('uses the weather icon for the hour, day or night', () => {
     expect(symbolAt(series(), { layer: 'temperature', instantSec: T0, label })).toEqual({
-      value: 10, label: 'temperature:10', icon: 'wx-clear-day', rotation: 0,
+      value: 10, label: 'temperature:10', icon: 'wx-clear-day',
     })
     expect(symbolAt(series(), { layer: 'precipitation', instantSec: T0 + HOUR_SEC, label })?.icon).toBe('wx-partly-cloudy-night-rain')
   })
 
-  it('uses a rotated arrow pointing where the wind blows to', () => {
-    expect(symbolAt(series(), { layer: 'wind', instantSec: T0, label })).toMatchObject({ icon: WIND_ARROW_IMAGE, rotation: 180 })
-    expect(symbolAt(series(), { layer: 'wind', instantSec: T0 + HOUR_SEC, label })?.rotation).toBe(90)
-    expect(symbolAt(series(), { layer: 'wind', instantSec: T0 + 2 * HOUR_SEC, label })?.rotation).toBe(0)
+  it('uses a pre-rotated arrow pointing where the wind blows to', () => {
+    expect(symbolAt(series(), { layer: 'wind', instantSec: T0, label })?.icon).toBe('wx-wind-arrow-180')
+    expect(symbolAt(series(), { layer: 'wind', instantSec: T0 + HOUR_SEC, label })?.icon).toBe('wx-wind-arrow-90')
+    expect(symbolAt(series(), { layer: 'wind', instantSec: T0 + 2 * HOUR_SEC, label })?.icon).toBe(PLACEHOLDER_IMAGE)
   })
 
   it('passes missing values to the label formatter', () => {
@@ -120,10 +122,18 @@ describe('buildCityFeatures', () => {
           value: 10,
           label: 'temperature:10',
           icon: 'wx-clear-day',
-          rotation: 0,
+          loading: false,
         },
       }],
     })
+  })
+
+  it('shows placeholders for cities without data while loading', () => {
+    const collection = buildCityFeatures([athens, oslo], new Map(), { layer: 'temperature', instantSec: T0, label, loading: true })
+    expect(collection.features.map(f => f.properties)).toEqual([
+      expect.objectContaining({ id: 264371, loading: true, icon: PLACEHOLDER_IMAGE, label: '' }),
+      expect.objectContaining({ id: 3143244, loading: true, icon: PLACEHOLDER_IMAGE, label: '' }),
+    ])
   })
 
   it('leaves out cities whose data does not cover the instant', () => {
@@ -161,5 +171,24 @@ describe('buildGridFeatures', () => {
     const data = new Map([[keyOf(withNull), { data: series() }]])
     const result = buildGridFeatures([withNull, without], data, { layer: 'temperature', instantSec: T0 + 2 * HOUR_SEC, keyOf })
     expect(result.features).toEqual([])
+  })
+})
+
+describe('windArrowImage', () => {
+  it('has 16 sprites in 22.5° steps', () => {
+    expect(WIND_ARROW_ANGLES).toHaveLength(16)
+    expect(WIND_ARROW_ANGLES.slice(0, 4)).toEqual([0, 23, 45, 68])
+    expect(WIND_ARROW_ANGLES[15]).toBe(338)
+  })
+
+  it.each([
+    [0, 'wx-wind-arrow-0'],
+    [11, 'wx-wind-arrow-0'],
+    [12, 'wx-wind-arrow-23'],
+    [350, 'wx-wind-arrow-0'],
+    [337.5, 'wx-wind-arrow-338'],
+    [-90, 'wx-wind-arrow-270'],
+  ])('%f° → %s', (deg, name) => {
+    expect(windArrowImage(deg)).toBe(name)
   })
 })

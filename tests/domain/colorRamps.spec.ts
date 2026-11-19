@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { COLOR_RAMPS, colorAt, legendTicks, stopColor, toCssGradient, toInterpolateExpression } from '@/domain/colorRamps'
+import { COLOR_RAMPS, colorAt, legendPosition, legendTicks, stopColor, toCssGradient, toInterpolateExpression } from '@/domain/colorRamps'
 import type { ColorRamp } from '@/domain/colorRamps'
 import { LAYER_IDS } from '@/domain/types'
 
 const sample: ColorRamp = {
   layer: 'temperature',
+  linear: true,
+  ticks: [0, 10, 20],
   stops: [
     { value: 0, color: '#000000' },
     { value: 10, color: '#ffffff', alpha: 0.5 },
@@ -60,12 +62,11 @@ describe('toCssGradient', () => {
     )
   })
 
-  it('handles uneven spacing and custom direction', () => {
+  it('spaces a non-linear ramp evenly and shows empty stops faintly', () => {
     const gradient = toCssGradient(COLOR_RAMPS.precipitation, 'to top')
-    expect(gradient.startsWith('linear-gradient(to top, ')).toBe(true)
-    expect(gradient).toContain(' 0%')
-    expect(gradient).toContain(' 100%')
-    expect(gradient).toContain(' 5%')
+    expect(gradient.startsWith('linear-gradient(to top, rgba(255, 255, 255, 0.06) 0%, ')).toBe(true)
+    expect(gradient).toContain(' 14.29%')
+    expect(gradient.endsWith(' 100%)')).toBe(true)
   })
 })
 
@@ -86,27 +87,43 @@ describe('colorAt', () => {
 })
 
 describe('legendTicks', () => {
-  it('labels every stop when there is room', () => {
-    expect(legendTicks(sample, 10)).toEqual([
+  it('places linear ramp ticks by value', () => {
+    expect(legendTicks(sample)).toEqual([
       { value: 0, positionPct: 0 },
       { value: 10, positionPct: 50 },
       { value: 20, positionPct: 100 },
     ])
+    expect(legendTicks(COLOR_RAMPS.temperature).map(t => t.positionPct)).toEqual([0, 20, 40, 60, 80, 100])
   })
 
-  it('drops stops that would overlap and always keeps both ends', () => {
-    const ticks = legendTicks(COLOR_RAMPS.precipitation, 12)
-    expect(ticks[0]?.value).toBe(0)
-    expect(ticks[ticks.length - 1]?.value).toBe(20)
-    expect(ticks.map(t => t.value)).not.toContain(0.1)
-    ticks.slice(1).forEach((tick, i) => {
-      expect(tick.positionPct - (ticks[i]?.positionPct ?? 0)).toBeGreaterThanOrEqual(12)
+  it('spaces non-linear ramp ticks evenly by stop', () => {
+    const stops = COLOR_RAMPS.precipitation.stops.length - 1
+    expect(legendTicks(COLOR_RAMPS.precipitation)).toEqual([
+      { value: 0, positionPct: 0 },
+      { value: 1, positionPct: (2 / stops) * 100 },
+      { value: 2, positionPct: (3 / stops) * 100 },
+      { value: 5, positionPct: (4 / stops) * 100 },
+      { value: 10, positionPct: (5 / stops) * 100 },
+      { value: 20, positionPct: 100 },
+    ])
+  })
+
+  it.each(LAYER_IDS)('%s ticks lie within the ramp', (layer) => {
+    const ramp = COLOR_RAMPS[layer]
+    const first = ramp.stops[0]?.value ?? 0
+    const last = ramp.stops[ramp.stops.length - 1]?.value ?? 0
+    ramp.ticks.forEach((tick) => {
+      expect(tick).toBeGreaterThanOrEqual(first)
+      expect(tick).toBeLessThanOrEqual(last)
     })
   })
+})
 
-  it.each(LAYER_IDS)('works for the %s ramp', (layer) => {
-    const ticks = legendTicks(COLOR_RAMPS[layer], 12)
-    expect(ticks.length).toBeGreaterThanOrEqual(2)
-    expect(ticks[ticks.length - 1]?.positionPct).toBe(100)
+describe('legendPosition', () => {
+  it('interpolates between stops on a non-linear ramp', () => {
+    const stops = COLOR_RAMPS.precipitation.stops.length - 1
+    expect(legendPosition(COLOR_RAMPS.precipitation, 7.5)).toBeCloseTo((4.5 / stops) * 100, 6)
+    expect(legendPosition(COLOR_RAMPS.precipitation, -1)).toBe(0)
+    expect(legendPosition(COLOR_RAMPS.precipitation, 99)).toBe(100)
   })
 })
