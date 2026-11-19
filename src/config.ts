@@ -3,6 +3,10 @@ export const config = {
   overviewTtlMs: 30 * 60_000,
   detailTtlMs: 60 * 60_000,
   cacheMaxEntries: 300,
+  /** Expired entries are kept this long as a fallback (e.g. when rate limited). */
+  cacheMaxStaleMs: 24 * 60 * 60_000,
+  /** Waits between retries after HTTP 429. */
+  retryBackoffMs: [1_000, 2_000, 4_000],
   moveDebounceMs: 400,
   overviewMinIntervalMs: 1_500,
   searchDebounceMs: 300,
