@@ -2,16 +2,20 @@
   <MissingTokenScreen v-if="!env.mapboxToken" />
   <main
     v-else
-    class="flex h-full items-center justify-center p-4"
+    class="relative h-full overflow-hidden"
   >
-    <h1 class="text-2xl font-semibold text-ink">
+    <h1 class="sr-only">
       {{ t('app.title') }}
     </h1>
+    <MapView />
+    <MapControls />
   </main>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import MapControls from '@/components/map/MapControls.vue'
+import MapView from '@/components/map/MapView.vue'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
 import { useUrlState } from '@/composables/useUrlState'
 import { env } from '@/config'

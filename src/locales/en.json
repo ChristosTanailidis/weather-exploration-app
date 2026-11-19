@@ -60,5 +60,9 @@
     "in": "{value} in",
     "tempShort": "{value}°",
     "missing": "–"
+  },
+  "map": {
+    "label": "Weather map",
+    "controls": "Map controls"
   }
 }
