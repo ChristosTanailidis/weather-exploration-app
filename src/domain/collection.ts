@@ -40,3 +40,37 @@ export function boundsOf(points: readonly LatLon[]): Bounds | null {
   const lons = points.map(p => p.lon)
   return { west: Math.min(...lons), south: Math.min(...lats), east: Math.max(...lons), north: Math.max(...lats) }
 }
+
+/** Values of each series at `hours` hourly instants from `startSec`; `null` where not covered. */
+export function alignSeries(series: HourlySeries | undefined, startSec: number, hours: number, pick: (s: HourlySeries, i: number) => number | null): (number | null)[] {
+  const HOUR_SEC = 3600
+  return Array.from({ length: hours }, (_, h) => {
+    if (!series) {
+      return null
+    }
+    const i = hourIndexAt(series.timesSec, startSec + h * HOUR_SEC)
+    return i < 0 ? null : pick(series, i)
+  })
+}
+
+export interface RangeBar {
+  leftPct: number
+  widthPct: number
+  /** Position of the current value inside the bar, 0–100. */
+  nowPct: number | null
+}
+
+/** Low–high bars for several places on one shared scale. */
+export function sharedRangeBars(ranges: readonly { min: number | null, max: number | null, now: number | null }[]): RangeBar[] {
+  const PERCENT = 100
+  const values = ranges.flatMap(r => [r.min, r.max]).filter((v): v is number => v !== null)
+  const low = Math.min(...values)
+  const span = Math.max(...values) - low || 1
+  return ranges.map(({ min, max, now }) => {
+    if (min === null || max === null) {
+      return { leftPct: 0, widthPct: 0, nowPct: null }
+    }
+    const nowPct = now === null ? null : Math.min(PERCENT, Math.max(0, ((now - min) / ((max - min) || 1)) * PERCENT))
+    return { leftPct: ((min - low) / span) * PERCENT, widthPct: ((max - min) / span) * PERCENT, nowPct }
+  })
+}

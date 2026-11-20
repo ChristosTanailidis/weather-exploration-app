@@ -97,7 +97,37 @@
       </p>
     </div>
 
-    <slot name="footer" />
+    <footer class="flex items-center gap-3 border-t border-border px-5 pt-4 pb-5">
+      <span
+        v-if="places.compareKeys.length > 0"
+        class="flex"
+        aria-hidden="true"
+      >
+        <span
+          v-for="(key, i) in places.compareKeys"
+          :key="key"
+          class="size-3 rounded-full ring-2 ring-surface-panel-solid"
+          :class="i > 0 && '-ml-0.75'"
+          :style="{ background: compareColor(key) }"
+        />
+      </span>
+      <span
+        class="flex-1 text-label font-normal text-text-secondary"
+        aria-live="polite"
+      >{{ compareHint }}</span>
+      <button
+        type="button"
+        class="inline-flex h-11 items-center gap-2 rounded-[12px] bg-accent px-4 text-[15px] font-semibold text-text-on-accent hover:bg-accent-hover disabled:bg-text-secondary/8 disabled:text-text-tertiary"
+        :disabled="!places.canCompare"
+        @click="places.setCompareOpen(true)"
+      >
+        <AppIcon
+          name="compare"
+          :size="18"
+        />
+        {{ t('compare.button') }}
+      </button>
+    </footer>
   </aside>
 </template>
 
@@ -137,6 +167,17 @@ const summaries = computed(() => {
     }
   }
   return result
+})
+
+const compareHint = computed(() => {
+  const n = places.compareKeys.length
+  if (places.listPlaces.length < config.compareMin) {
+    return t('compare.saveMore')
+  }
+  if (n === 1) {
+    return t('compare.tooFew')
+  }
+  return n === 0 ? t('myPlaces.selectHint') : t('compare.selectedCount', { n, max: config.compareMax })
 })
 
 /** Each compared place keeps its colour everywhere (list, cards, chart). */

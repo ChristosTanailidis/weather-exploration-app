@@ -236,5 +236,22 @@
     "emptyTitle": "No saved places yet",
     "emptyBody": "Open any place on the map or from search, then tap the {star} in its panel. Saved places show here and are outlined in amber on the map.",
     "star": "star"
+  },
+  "compare": {
+    "button": "Compare",
+    "title": "Compare",
+    "subtitle": "{n} places · next 48 hours",
+    "back": "Back to map",
+    "edit": "Edit selection",
+    "remove": "Remove {name} from compare",
+    "cardRegion": "{country} · {time}",
+    "range": "Next 24 h",
+    "rangeLabel": "Next 24 hours: low {min}, high {max}",
+    "chartTitle": "Temperature · {unit}",
+    "chartLabel": "Temperature over the next 48 hours for {names}",
+    "now": "Now",
+    "selectedCount": "{n} of {max} selected",
+    "tooFew": "Select at least one more place to compare",
+    "saveMore": "Save 2 or more places to compare"
   }
 }

@@ -51,6 +51,7 @@
     </MapView>
     <PlacePanel />
     <MyPlacesPanel />
+    <CompareView />
     <StatusSlot class="absolute inset-x-3 top-[162px] z-(--z-toast) lg:top-22 lg:right-auto lg:left-102 lg:max-w-146" />
     <div class="absolute top-14 right-18 left-3 z-(--z-popover) lg:top-6 lg:right-auto lg:left-6 lg:w-90">
       <SearchBox @select="openSearchResult" />
@@ -89,6 +90,7 @@ import SelectionLayer from '@/components/map/SelectionLayer.vue'
 import TimeSlider from '@/components/map/TimeSlider.vue'
 import WeatherLegend from '@/components/map/WeatherLegend.vue'
 import PlacePanel from '@/components/place/PlacePanel.vue'
+import CompareView from '@/components/places/CompareView.vue'
 import MyPlacesPanel from '@/components/places/MyPlacesPanel.vue'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
 import AppIcon from '@/components/ui/AppIcon.vue'

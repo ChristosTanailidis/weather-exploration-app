@@ -30,6 +30,8 @@ export const usePlacesStore = defineStore('places', () => {
   const collectionWeather = shallowRef<ReadonlyMap<string, Cached<HourlySeries>>>(new Map())
   /** Whether the My places list is open (it shares the drawer with the place panel). */
   const listOpen = ref(false)
+  /** Whether the compare overlay is open. */
+  const compareOpen = ref(false)
 
   /** "You are here" first, then the saved places. */
   const listPlaces = computed(() => [
@@ -53,6 +55,10 @@ export const usePlacesStore = defineStore('places', () => {
 
   function setListOpen(open: boolean): void {
     listOpen.value = open
+  }
+
+  function setCompareOpen(open: boolean): void {
+    compareOpen.value = open && canCompare.value
   }
 
   function setCollectionWeather(entries: ReadonlyMap<string, Cached<HourlySeries>>): void {
@@ -133,6 +139,7 @@ export const usePlacesStore = defineStore('places', () => {
     currentLocation,
     collectionWeather,
     listOpen,
+    compareOpen,
     listPlaces,
     comparePlaces,
     canCompare,
@@ -144,6 +151,7 @@ export const usePlacesStore = defineStore('places', () => {
     move,
     moveBy,
     setListOpen,
+    setCompareOpen,
     setCollectionWeather,
     toggleCompare,
     clearCompare,
