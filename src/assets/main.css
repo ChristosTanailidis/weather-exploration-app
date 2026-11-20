@@ -123,6 +123,8 @@
   --status-slot-top-mobile: 162px;
   --toast-tint: 0.16;
   --sheet-peek: 276px;
+  --compare-chart-min: 320px;
+  --compare-chart-max: 512px;
 }
 
 @keyframes pulse-ring {

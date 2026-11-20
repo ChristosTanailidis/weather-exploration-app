@@ -41,7 +41,7 @@
         </button>
       </header>
 
-      <div class="flex flex-col gap-4 px-3 pb-4 lg:px-6 lg:pb-6">
+      <div class="flex flex-col gap-4 px-3 pb-4 lg:grid lg:flex-1 lg:grid-rows-[auto_minmax(var(--compare-chart-min),1fr)] lg:px-6 lg:pb-6">
         <ul class="grid grid-cols-1 gap-3 lg:grid-cols-[repeat(auto-fit,minmax(0,1fr))]">
           <li
             v-for="(card, i) in cards"

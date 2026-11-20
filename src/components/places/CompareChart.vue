@@ -1,5 +1,5 @@
 <template>
-  <section class="rounded-[16px] border border-border bg-surface-card/60 p-4 lg:p-5">
+  <section class="rounded-[16px] border border-border bg-surface-card/60 p-4 lg:flex lg:max-h-(--compare-chart-max) lg:flex-col lg:p-5">
     <div class="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
       <h3 class="text-body-s font-semibold">
         {{ t('compare.chartTitle', { unit: t(`legend.unit.${settings.units === 'metric' ? 'celsius' : 'fahrenheit'}`) }) }}
@@ -31,14 +31,17 @@
       </ul>
     </div>
     <div
-      :class="isDesktop ? 'h-110' : 'h-75'"
+      class="relative"
+      :class="isDesktop ? 'min-h-0 flex-1' : 'h-75'"
       role="img"
       :aria-label="t('compare.chartLabel', { names: lines.map(l => l.title).join(', ') })"
     >
-      <VChart
-        :option="option"
-        autoresize
-      />
+      <div class="absolute inset-0">
+        <VChart
+          :option="option"
+          autoresize
+        />
+      </div>
     </div>
   </section>
 </template>
