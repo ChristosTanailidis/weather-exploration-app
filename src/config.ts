@@ -37,6 +37,9 @@ export const config = {
   locationMaxAgeMs: 10 * 60_000,
   /** Success messages in the status slot hide after this; errors stay. */
   statusAutoHideMs: 5_000,
+  /** After a failed overview request (retries included), try again after this. */
+  feedRetryMs: 30_000,
+  countdownTickMs: 1_000,
   forecastHours: 48,
   /** How often the clock behind "now" is refreshed. */
   clockTickMs: 60_000,

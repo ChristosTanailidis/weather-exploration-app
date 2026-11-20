@@ -2,6 +2,7 @@ import { useDocumentVisibility } from '@vueuse/core'
 import { computed, watch } from 'vue'
 import { weatherService } from '@/api/weatherService'
 import { useForecastTime } from '@/composables/useForecastTime'
+import { reportFrom, useFeedStore } from '@/stores/feedStore'
 import { usePlacesStore } from '@/stores/placesStore'
 
 /**
@@ -12,6 +13,7 @@ import { usePlacesStore } from '@/stores/placesStore'
  */
 export function useCollectionWeather(): void {
   const places = usePlacesStore()
+  const feed = useFeedStore()
   const { nowHourSec } = useForecastTime()
   const visibility = useDocumentVisibility()
   const keys = computed(() => places.listPlaces.map(place => place.key).join('|'))
@@ -21,9 +23,18 @@ export function useCollectionWeather(): void {
     if (points.length === 0) {
       return
     }
-    const result = await weatherService.getOverview(points)
-    places.setCollectionWeather(result.entries)
+    feed.report('collection', { loading: true })
+    try {
+      const result = await weatherService.getOverview(points)
+      places.setCollectionWeather(result.entries)
+      feed.report('collection', reportFrom(result.entries, result.error, places.collectionWeather.size > 0))
+    }
+    finally {
+      feed.report('collection', { loading: false })
+    }
   }
+
+  feed.register('collection', refresh)
 
   watch([keys, nowHourSec, visibility], ([, , state]) => {
     if (state === 'visible') {

@@ -253,5 +253,17 @@
     "selectedCount": "{n} of {max} selected",
     "tooFew": "Select at least one more place to compare",
     "saveMore": "Save 2 or more places to compare"
+  },
+  "feed": {
+    "loading": "Loading weather for 48 hours…",
+    "staleTitle": "Updated {minutes} min ago.",
+    "staleBody": "Live updates paused; showing the last forecast.",
+    "refresh": "Refresh",
+    "busyTitle": "The weather service is busy",
+    "busyRateLimited": "Too many requests right now.",
+    "busyError": "The weather service didn’t respond.",
+    "showingFrom": "Showing weather from {time}.",
+    "retryIn": "We’ll try again in {seconds} s.",
+    "retryNow": "Retry now"
   }
 }

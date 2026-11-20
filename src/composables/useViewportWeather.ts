@@ -9,6 +9,7 @@ import { config } from '@/config'
 import { isOnVisibleHemisphere, thinCities } from '@/domain/geo'
 import { cityKey } from '@/domain/places'
 import type { City, HourlySeries } from '@/domain/types'
+import { reportFrom, useFeedStore } from '@/stores/feedStore'
 import { useMapStore } from '@/stores/mapStore'
 
 /**
@@ -21,6 +22,7 @@ export function useViewportWeather() {
   const { map } = useMapContext()
   const store = useMapStore()
   const { cities } = useCities()
+  const feed = useFeedStore()
 
   const visibleCities = shallowRef<readonly City[]>([])
   const weather = shallowRef<ReadonlyMap<string, Cached<HourlySeries>>>(new Map())
@@ -51,15 +53,20 @@ export function useViewportWeather() {
       return
     }
     loading.value = true
+    feed.report('cities', { loading: true })
     try {
       const result = await weatherService.getOverview(picked.map(city => ({ key: cityKey(city), lat: city.lat, lon: city.lon })))
       weather.value = new Map([...weather.value, ...result.entries])
       error.value = result.error
+      feed.report('cities', reportFrom(result.entries, result.error, weather.value.size > 0))
     }
     finally {
       loading.value = false
+      feed.report('cities', { loading: false })
     }
   }
+
+  feed.register('cities', refresh)
 
   watch([() => store.bounds, cities], () => {
     void refresh()

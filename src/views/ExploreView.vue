@@ -100,6 +100,7 @@ import StatusSlot from '@/components/ui/StatusSlot.vue'
 import { useCities } from '@/composables/useCities'
 import { useCollectionWeather } from '@/composables/useCollectionWeather'
 import { useCurrentLocation } from '@/composables/useCurrentLocation'
+import { useFeedStatus } from '@/composables/useFeedStatus'
 import { useIsDesktop } from '@/composables/useLayout'
 import { useMyWorld } from '@/composables/useMyWorld'
 import { useUrlState } from '@/composables/useUrlState'
@@ -126,6 +127,7 @@ useUrlState({
 
 const { canShowMyWorld, showMyWorld } = useMyWorld()
 useCollectionWeather()
+useFeedStatus()
 
 const location = useCurrentLocation()
 onMounted(() => {

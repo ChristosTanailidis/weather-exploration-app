@@ -19,6 +19,8 @@ export interface StatusMessage {
   icon: IconName
   title: string
   body?: string
+  /** Changing detail (e.g. a countdown), shown but not announced. */
+  detail?: string
   action?: StatusAction
   dismissible?: boolean
 }

@@ -1,6 +1,7 @@
 <template>
   <div
     v-if="message"
+    :key="message.id"
     :role="message.kind === 'danger' || message.kind === 'warning' ? 'alert' : 'status'"
     class="status flex items-start gap-3 rounded-lg py-3 pr-2 pl-3.5"
     :style="{ '--tint': TINTS[message.kind] }"
@@ -17,6 +18,11 @@
         v-if="message.body"
         class="text-label leading-normal font-normal text-text-secondary"
       >{{ message.body }}</span>
+      <span
+        v-if="message.detail"
+        class="text-label leading-normal font-normal text-text-secondary"
+        aria-hidden="true"
+      >{{ message.detail }}</span>
     </div>
     <button
       v-if="message.action"
