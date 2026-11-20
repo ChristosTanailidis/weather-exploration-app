@@ -6,6 +6,12 @@ Explore the weather anywhere in the world on an interactive globe: a TV weather 
 
 Pan the globe to see temperature, precipitation, wind or clouds across a whole region, scrub through the next 48 hours, click anywhere (sea included) or search for a place to dive into its forecast, save the places you care about, compare them side by side, and see the weather where you are.
 
+![Thessaloníki's forecast panel open beside the temperature map of the Balkans and the Mediterranean, with the 48-hour slider at the bottom](docs/screenshots/place-details.webp)
+
+| Wind layer at whole-globe zoom | Comparing three places over 48 hours |
+| --- | --- |
+| ![The globe over the Americas with wind arrows, speeds and the wind colour grid](docs/screenshots/wind-globe.webp) | ![Compare view with cards for Tokyo, León and Ciego de Ávila and their temperature lines](docs/screenshots/compare.webp) |
+
 ## Contents
 
 - [Installation and setup](#installation-and-setup)
