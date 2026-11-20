@@ -123,9 +123,8 @@
 
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core'
-import { computed, nextTick, useTemplateRef, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import CompareChart from '@/components/places/CompareChart.vue'
 import type { CompareLine } from '@/components/places/CompareChart.vue'
 import AppIcon from '@/components/ui/AppIcon.vue'
 import FlagIcon from '@/components/ui/FlagIcon.vue'
@@ -143,6 +142,9 @@ import { usePlacesStore } from '@/stores/placesStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 
 const MS_PER_SEC = 1000
+
+/** ECharts loads only when Compare first opens. */
+const CompareChart = defineAsyncComponent(() => import('@/components/places/CompareChart.vue'))
 
 const { t } = useI18n()
 const places = usePlacesStore()

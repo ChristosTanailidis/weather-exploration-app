@@ -6,6 +6,7 @@
     @click="expanded = false"
   />
   <section
+    v-bind="$attrs"
     class="sheet fixed inset-x-0 bottom-0 z-(--z-overlay) flex flex-col rounded-t-[22px] border border-b-0 border-border bg-surface-panel shadow-sheet"
     :class="expanded ? 'top-12' : 'h-(--sheet-peek)'"
     :aria-label="label"
@@ -26,6 +27,9 @@
 </template>
 
 <script setup lang="ts">
+/** Two root nodes (scrim and sheet): attributes and listeners such as Esc go to the sheet. */
+defineOptions({ inheritAttrs: false })
+
 const { label, expandLabel, collapseLabel } = defineProps<{
   label: string
   expandLabel: string

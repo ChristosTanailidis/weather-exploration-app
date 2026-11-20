@@ -228,6 +228,12 @@
   }
 }
 
+/* Mapbox logo and attribution sit in the 24 px gap below the time slider. */
+.mapboxgl-map .mapboxgl-ctrl-bottom-left .mapboxgl-ctrl,
+.mapboxgl-map .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl {
+  margin-bottom: 0;
+}
+
 /* Keep the Mapbox attribution clear of the drawer zone on desktop. */
 @media (min-width: 64rem) {
   .mapboxgl-map .mapboxgl-ctrl-bottom-right {

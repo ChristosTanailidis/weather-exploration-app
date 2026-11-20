@@ -14,6 +14,9 @@
       />
       <div
         class="min-h-0 flex-1 overflow-y-auto pb-6"
+        tabindex="0"
+        role="region"
+        :aria-label="t('panel.details')"
         :aria-busy="state.status === 'loading'"
       >
         <PanelContent
@@ -44,6 +47,9 @@
     <div
       class="min-h-0 flex-1 pb-6"
       :class="expanded ? 'overflow-y-auto' : 'overflow-hidden'"
+      :tabindex="expanded ? 0 : undefined"
+      role="region"
+      :aria-label="t('panel.details')"
       :aria-busy="state.status === 'loading'"
     >
       <PanelContent

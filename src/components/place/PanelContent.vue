@@ -27,10 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import type { Cached } from '@/api/weatherService'
 import DailyList from '@/components/place/DailyList.vue'
-import HourlyChart from '@/components/place/HourlyChart.vue'
 import NowCard from '@/components/place/NowCard.vue'
 import PanelError from '@/components/place/PanelError.vue'
 import PanelSkeleton from '@/components/place/PanelSkeleton.vue'
@@ -43,6 +42,9 @@ const { state, compact } = defineProps<{
   compact: boolean
 }>()
 const emit = defineEmits<{ retry: [] }>()
+
+/** ECharts loads only when a panel first shows a chart, not before the map. */
+const HourlyChart = defineAsyncComponent(() => import('@/components/place/HourlyChart.vue'))
 
 const CHART_HOURS = 24
 const nowMs = useClock()

@@ -198,7 +198,8 @@
     "errorBody": "The weather service didn’t respond. Check your connection, then try again. The map keeps working meanwhile.",
     "retry": "Try again",
     "updated": "Updated {minutes} min ago",
-    "region": "{admin1} · {country}"
+    "region": "{admin1} · {country}",
+    "details": "Forecast details"
   },
   "compass": {
     "n": "N",
@@ -265,5 +266,9 @@
     "showingFrom": "Showing weather from {time}.",
     "retryIn": "We’ll try again in {seconds} s.",
     "retryNow": "Retry now"
+  },
+  "attribution": {
+    "openMeteo": "Weather data by Open-Meteo.com",
+    "geonames": "Places © GeoNames"
   }
 }

@@ -2,9 +2,10 @@ import { useDebounceFn } from '@vueuse/core'
 import mapboxgl from 'mapbox-gl'
 import { inject, onMounted, onUnmounted, provide, readonly, shallowRef, watch } from 'vue'
 import type { InjectionKey, Ref, ShallowRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { applyBasemapTheme } from '@/composables/mapTheme'
 import { useIsDesktop } from '@/composables/useLayout'
-import { config, env } from '@/config'
+import { config, env, links } from '@/config'
 import type { Bounds } from '@/domain/geo'
 import { useMapStore } from '@/stores/mapStore'
 
@@ -51,7 +52,14 @@ function readBounds(map: mapboxgl.Map): Bounds {
  */
 export function useMap(container: Readonly<ShallowRef<HTMLElement | null>>): MapContext {
   const store = useMapStore()
+  const { t } = useI18n()
   const map = shallowRef<mapboxgl.Map | null>(null)
+
+  /** CC BY 4.0 data sources, credited next to the Mapbox attribution. */
+  const attribution = [
+    `<a href="${links.openMeteo}" target="_blank" rel="noopener">${t('attribution.openMeteo')}</a>`,
+    `<a href="${links.geonames}" target="_blank" rel="noopener">${t('attribution.geonames')}</a>`,
+  ]
   const styleReady = shallowRef(false)
   const isDesktop = useIsDesktop()
 
@@ -85,6 +93,7 @@ export function useMap(container: Readonly<ShallowRef<HTMLElement | null>>): Map
       center: [store.view.lon, store.view.lat],
       zoom: store.view.zoom,
       maxZoom: config.maxZoom,
+      customAttribution: attribution,
     })
     instance.setPadding(padding())
     instance.on('style.load', () => {

@@ -69,5 +69,7 @@ export const env = {
 /** External links shown in the UI. `liveDemo` stays empty until the app is deployed. */
 export const links = {
   mapboxGuide: 'https://docs.mapbox.com/help/getting-started/access-tokens/',
+  openMeteo: 'https://open-meteo.com/',
+  geonames: 'https://www.geonames.org/',
   liveDemo: '',
 } as const

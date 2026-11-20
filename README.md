@@ -116,6 +116,8 @@ Example: a fresh view of Europe costs two requests (about 30–48 cities and up 
 
 ### Data and attribution
 
+Open-Meteo and GeoNames are also credited in the map's attribution control, next to Mapbox.
+
 - Weather data: [Open-Meteo](https://open-meteo.com/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - City data: [GeoNames](https://www.geonames.org/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - Map: © [Mapbox](https://www.mapbox.com/about/maps/) © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors
