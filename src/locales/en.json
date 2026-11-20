@@ -89,12 +89,7 @@
       "wind": "Wind",
       "clouds": "Clouds"
     },
-    "chip": {
-      "temperature": "Temp",
-      "precipitation": "Rain",
-      "wind": "Wind",
-      "clouds": "Clouds"
-    }
+    "menuLabel": "Map layer: {layer}"
   },
   "legend": {
     "label": "Legend",

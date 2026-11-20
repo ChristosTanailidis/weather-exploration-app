@@ -69,7 +69,7 @@
         :filled="places.listOpen"
       />
     </button>
-    <LayerSwitcher class="absolute inset-x-3 top-[70px] z-(--z-controls) lg:top-6 lg:right-auto lg:left-102" />
+    <LayerSwitcher class="absolute top-[70px] left-3 z-(--z-controls) lg:top-6 lg:left-102" />
     <WeatherLegend class="absolute inset-x-3 bottom-34 z-(--z-controls) lg:right-auto lg:left-6 lg:w-80" />
     <TimeSlider class="absolute inset-x-3 bottom-6 z-(--z-controls) lg:right-(--drawer-zone) lg:left-6" />
     <RequestCounter class="absolute top-[78px] right-3 z-(--z-toast) lg:top-auto lg:right-(--drawer-zone) lg:bottom-34" />

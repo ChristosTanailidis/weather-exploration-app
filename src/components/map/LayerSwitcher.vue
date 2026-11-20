@@ -1,5 +1,9 @@
 <template>
-  <fieldset class="flex gap-1.5 overflow-x-auto lg:glass lg:gap-0.5 lg:overflow-visible lg:rounded-lg lg:p-1">
+  <LayerMenu v-if="!isDesktop" />
+  <fieldset
+    v-else
+    class="glass flex gap-0.5 rounded-lg p-1"
+  >
     <legend class="sr-only">
       {{ t('layers.label') }}
     </legend>
@@ -22,7 +26,6 @@
         :name="layer"
         :size="18"
       />
-      <span class="lg:hidden">{{ t(`layers.chip.${layer}`) }}</span>
       <span class="hidden min-[1360px]:inline">{{ t(`layers.${layer}`) }}</span>
       <span class="hidden min-[1180px]:max-[1359px]:inline">{{ t(`layers.short.${layer}`) }}</span>
     </label>
@@ -32,13 +35,17 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import LayerMenu from '@/components/map/LayerMenu.vue'
 import AppIcon from '@/components/ui/AppIcon.vue'
+import { useIsDesktop } from '@/composables/useLayout'
 import { LAYER_IDS } from '@/domain/types'
 import type { LayerId } from '@/domain/types'
 import { useMapStore } from '@/stores/mapStore'
 
 const { t } = useI18n()
 const store = useMapStore()
+/** Phones get a single chip with a dropdown; the segmented control needs the desktop width. */
+const isDesktop = useIsDesktop()
 
 const activeLayer = computed<LayerId>({
   get: () => store.activeLayer,
@@ -50,8 +57,7 @@ const activeLayer = computed<LayerId>({
 @reference "@/assets/main.css";
 
 .option {
-  @apply glass flex h-10 flex-none cursor-pointer items-center gap-2 rounded-full px-3.5 text-body-s font-semibold whitespace-nowrap;
-  @apply lg:rounded-md lg:border-transparent lg:bg-transparent lg:shadow-none lg:backdrop-blur-none;
+  @apply flex h-10 flex-none cursor-pointer items-center gap-2 rounded-md px-3.5 text-body-s font-semibold whitespace-nowrap;
 }
 
 .option:has(input:focus-visible) {
@@ -64,6 +70,6 @@ const activeLayer = computed<LayerId>({
 }
 
 .option-active {
-  @apply bg-text-primary text-text-inverse lg:bg-text-primary;
+  @apply bg-text-primary text-text-inverse;
 }
 </style>
