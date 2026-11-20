@@ -67,7 +67,7 @@
 
     <div
       v-if="showPanel"
-      :class="fullScreen ? 'flex-1 overflow-y-auto' : 'absolute inset-x-0 top-14 overflow-hidden rounded-lg border border-border-strong bg-surface-elevated shadow-popover'"
+      :class="fullScreen ? 'flex-1 overflow-y-auto overscroll-contain' : 'absolute inset-x-0 top-14 overflow-hidden rounded-lg border border-border-strong bg-surface-elevated shadow-popover'"
     >
       <div
         v-if="state.status === 'hint'"

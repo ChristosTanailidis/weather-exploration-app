@@ -151,6 +151,13 @@
     height: 100%;
   }
 
+  /* The app fills the screen and never scrolls as a page: no bounce, no pull-to-refresh, no scroll chaining. */
+  html,
+  body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   body {
     @apply bg-surface-space font-sans text-body-m text-text-primary antialiased;
   }

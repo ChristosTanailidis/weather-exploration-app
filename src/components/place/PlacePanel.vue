@@ -13,7 +13,7 @@
         @close="close"
       />
       <div
-        class="min-h-0 flex-1 overflow-y-auto pb-6"
+        class="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-6"
         tabindex="0"
         role="region"
         :aria-label="t('panel.details')"
@@ -49,7 +49,7 @@
         />
       </div>
       <div
-        class="min-h-0 flex-1 pb-6"
+        class="min-h-0 flex-1 overscroll-contain pb-6"
         :class="expanded ? 'overflow-y-auto' : 'overflow-hidden'"
         :tabindex="expanded ? 0 : undefined"
         role="region"

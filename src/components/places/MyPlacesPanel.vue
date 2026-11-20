@@ -58,7 +58,7 @@
         <span class="text-label font-normal text-text-secondary">{{ places.collection.length === 0 ? t('myPlaces.saveForWorld') : t('myPlaces.selectHint') }}</span>
       </div>
 
-      <div class="relative min-h-0 flex-1 overflow-y-auto px-2">
+      <div class="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-2">
         <ul
           class="flex flex-col gap-0.5"
           :aria-label="t('myPlaces.list')"

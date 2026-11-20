@@ -76,7 +76,7 @@ npm run preview        # serve the production build
 | **Meteocons** | Weather icons: static on the map, animated in panels (static with reduced motion). |
 | **flag-icons** | SVG flags; emoji flags don't render on Windows. Each flag file is fetched only when shown. |
 | **Fontsource** | Inter and Space Grotesk self-hosted, no third-party font requests. |
-| **Vitest** | 335 unit tests on the logic: domain, API layer, cache, weather service, stores, URL state, search, sheet gestures. |
+| **Vitest** | 341 unit tests on the logic: domain, API layer, cache, weather service, stores, URL state, search, sheet gestures. |
 | **ESLint (flat config) + @stylistic** | Linting and formatting in one tool. |
 
 There is **no backend**: the app calls Open-Meteo straight from the browser. Open-Meteo's free-tier limits apply per IP address, so each visitor brings their own budget; a proxy would put every visitor on one IP and one budget.
@@ -162,6 +162,7 @@ Open-Meteo and GeoNames are also credited in the map's attribution control, next
 - The request strategy assumes multi-location requests count once per location; if Open-Meteo counts them as one call, the real usage is far lower.
 - Open-Meteo returns hourly series starting at the current hour, so right after the hour changes the last slider step can be empty until the hourly refresh.
 - Local times come from Open-Meteo's `utc_offset_seconds` for the forecast period.
+- Pull-to-refresh is off on phones: the page never scrolls, and vertical drags that nothing under the finger can scroll are cancelled, because iOS Safari doesn't reliably honour `overscroll-behavior` for pull-to-refresh. Panels still scroll normally.
 
 **Accessibility**
 

@@ -4,7 +4,7 @@
     class="fixed inset-0 z-(--z-overlay) lg:bg-black/60 lg:p-3"
   >
     <section
-      class="flex h-full flex-col overflow-y-auto bg-surface-panel-solid lg:rounded-[20px] lg:border lg:border-border lg:shadow-panel"
+      class="flex h-full flex-col overflow-y-auto overscroll-contain bg-surface-panel-solid lg:rounded-[20px] lg:border lg:border-border lg:shadow-panel"
       :aria-label="t('compare.title')"
     >
       <header class="flex flex-wrap items-center gap-x-4 gap-y-2 px-3 pt-3 pb-3 lg:px-6 lg:pt-5 lg:pb-4">
