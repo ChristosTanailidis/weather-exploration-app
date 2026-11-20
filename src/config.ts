@@ -30,6 +30,8 @@ export const config = {
   enableGridLayer: true,
   gridMaxPoints: 80,
   gridOpacity: 0.45,
+  /** Each grid cell is drawn as n × n interpolated sub-cells (no extra requests). */
+  gridSubdivisions: 6,
   maxLocationsPerRequest: 100,
   nearestCityMaxKm: 50,
   /** Geolocation: a coarse position is enough; reuse one up to 10 min old. */

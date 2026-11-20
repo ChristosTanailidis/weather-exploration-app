@@ -170,37 +170,98 @@ export interface GridOptions {
   instantSec: number
   /** Cache key of a cell (the same key used to fetch it). */
   keyOf: (cell: GridCell) => string
+  /**
+   * Sub-cells per side. 1 draws each cell flat; more splits it into
+   * n × n sub-cells interpolated between neighbouring grid points.
+   */
+  subdivisions?: number
 }
 
 const MAX_LAT = 90
+const FULL_TURN = 360
 
-/** One square polygon per grid cell with a value at the instant; others are left out. */
+type Polygon = PolygonFeature<GridFeatureProps>
+
+function square(west: number, south: number, east: number, north: number, value: number): Polygon {
+  const s = Math.max(-MAX_LAT, south)
+  const n = Math.min(MAX_LAT, north)
+  return {
+    type: 'Feature',
+    geometry: { type: 'Polygon', coordinates: [[[west, s], [east, s], [east, n], [west, n], [west, s]]] },
+    properties: { value },
+  }
+}
+
+/**
+ * Colour grid polygons. Values come only from the fetched grid points; with
+ * `subdivisions` > 1 each cell is drawn as smaller squares whose values are
+ * interpolated (bilinear) between the surrounding points, so the field
+ * looks fine-grained without fetching more points. Missing neighbours are
+ * left out of the blend; cells without a value of their own are skipped.
+ */
 export function buildGridFeatures(
   cells: readonly GridCell[],
   data: ReadonlyMap<string, { data: HourlySeries }>,
   options: GridOptions,
-): FeatureCollection<PolygonFeature<GridFeatureProps>> {
-  const features: PolygonFeature<GridFeatureProps>[] = []
-  for (const cell of cells) {
+): FeatureCollection<Polygon> {
+  const subdivisions = Math.max(1, Math.round(options.subdivisions ?? 1))
+
+  // Values on the lattice, by row and column of the cell centres.
+  const values = new Map<string, number>()
+  const latticeKey = (row: number, col: number): string => `${row}:${col}`
+  const valueOf = (cell: GridCell): number | null => {
     const series = data.get(options.keyOf(cell))?.data
     const index = series ? hourIndexAt(series.timesSec, options.instantSec) : -1
-    const value = series && index >= 0 ? layerValue(series, options.layer, index) : null
-    if (value === null) {
+    return series && index >= 0 ? layerValue(series, options.layer, index) : null
+  }
+  const position = (cell: LatLon, step: number) => ({
+    row: (cell.lat + MAX_LAT) / step - 0.5,
+    col: (cell.lon + HALF_TURN_DEG) / step - 0.5,
+  })
+  for (const cell of cells) {
+    const value = valueOf(cell)
+    if (value !== null) {
+      const { row, col } = position(cell, cell.stepDeg)
+      values.set(latticeKey(Math.round(row), Math.round(col)), value)
+    }
+  }
+
+  const features: Polygon[] = []
+  for (const cell of cells) {
+    const own = values.get(latticeKey(Math.round(position(cell, cell.stepDeg).row), Math.round(position(cell, cell.stepDeg).col)))
+    if (own === undefined) {
       continue
     }
-    const half = cell.stepDeg / 2
-    const west = cell.lon - half
-    const east = cell.lon + half
-    const south = Math.max(-MAX_LAT, cell.lat - half)
-    const north = Math.min(MAX_LAT, cell.lat + half)
-    features.push({
-      type: 'Feature',
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[[west, south], [east, south], [east, north], [west, north], [west, south]]],
-      },
-      properties: { value },
-    })
+    const step = cell.stepDeg
+    const half = step / 2
+    if (subdivisions === 1) {
+      features.push(square(cell.lon - half, cell.lat - half, cell.lon + half, cell.lat + half, own))
+      continue
+    }
+    const columnsAround = Math.round(FULL_TURN / step)
+    const sub = step / subdivisions
+    for (let j = 0; j < subdivisions; j++) {
+      const south = cell.lat - half + j * sub
+      for (let i = 0; i < subdivisions; i++) {
+        const west = cell.lon - half + i * sub
+        const { row, col } = position({ lat: south + sub / 2, lon: west + sub / 2 }, step)
+        const r0 = Math.floor(row)
+        const c0 = Math.floor(col)
+        const tr = row - r0
+        const tc = col - c0
+        let sum = 0
+        let weight = 0
+        for (const [dr, dc, w] of [[0, 0, (1 - tr) * (1 - tc)], [0, 1, (1 - tr) * tc], [1, 0, tr * (1 - tc)], [1, 1, tr * tc]] as const) {
+          const wrapped = (((c0 + dc) % columnsAround) + columnsAround) % columnsAround
+          const neighbour = values.get(latticeKey(r0 + dr, wrapped))
+          if (neighbour !== undefined && w > 0) {
+            sum += neighbour * w
+            weight += w
+          }
+        }
+        features.push(square(west, south, west + sub, south + sub, weight > 0 ? sum / weight : own))
+      }
+    }
   }
   return { type: 'FeatureCollection', features }
 }

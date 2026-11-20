@@ -27,6 +27,7 @@ const features = computed(() => buildGridFeatures(cells.value, weather.value, {
   layer: store.activeLayer,
   instantSec: instantSec.value,
   keyOf: gridCellKey,
+  subdivisions: config.gridSubdivisions,
 }))
 
 const fillColor = (layer: LayerId): ExpressionSpecification =>
@@ -49,6 +50,8 @@ function install(instance: mapboxgl.Map): void {
       paint: {
         'fill-color': fillColor(store.activeLayer),
         'fill-opacity': config.gridOpacity,
+        // Adjacent sub-cells would show hairline seams with antialiasing.
+        'fill-antialias': false,
       },
     }
     instance.addLayer(layer, firstSymbolLayerId(instance))

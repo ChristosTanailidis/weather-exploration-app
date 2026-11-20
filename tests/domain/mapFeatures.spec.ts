@@ -212,3 +212,51 @@ describe('buildPinFeatures', () => {
     expect(collection.features[0]?.geometry.coordinates).toEqual([23.73, 37.98])
   })
 })
+
+describe('buildGridFeatures with subdivisions', () => {
+  const STEP = 10
+  const keyOf = (cell: { lat: number, lon: number }) => `pt:${cell.lat},${cell.lon}`
+  /** A series whose temperature is the same at every hour. */
+  const flat = (tempC: number): HourlySeries => series({ tempC: [tempC, tempC, tempC] })
+  const cell = (lat: number, lon: number) => ({ lat, lon, stepDeg: STEP })
+  const valuesOf = (collection: { features: { properties: { value: number } }[] }) => collection.features.map(f => f.properties.value)
+  const options = { layer: 'temperature' as const, instantSec: T0, keyOf, subdivisions: 4 }
+
+  it('draws n × n sub-cells per cell', () => {
+    const cells = [cell(5, 5), cell(5, 15)]
+    const data = new Map(cells.map(c => [keyOf(c), { data: flat(10) }]))
+    const result = buildGridFeatures(cells, data, options)
+    expect(result.features).toHaveLength(2 * 16)
+    expect(new Set(valuesOf(result))).toEqual(new Set([10]))
+  })
+
+  it('interpolates linearly between neighbouring grid points', () => {
+    const cells = [cell(5, 5), cell(5, 15)]
+    const data = new Map([[keyOf(cells[0]!), { data: flat(0) }], [keyOf(cells[1]!), { data: flat(20) }]])
+    const west = buildGridFeatures(cells, data, options).features.slice(0, 4).map(f => f.properties.value)
+    // Sub-cell centres at lon 1.25, 3.75, 6.25, 8.75: before the centre (5) the
+    // only data to the west is missing, so it holds; after it, values rise toward 20.
+    expect(west).toEqual([0, 0, 2.5, 7.5])
+  })
+
+  it('falls back to its own value when no neighbour has data', () => {
+    const lonely = cell(45, 45)
+    const result = buildGridFeatures([lonely], new Map([[keyOf(lonely), { data: flat(7) }]]), options)
+    expect(new Set(valuesOf(result))).toEqual(new Set([7]))
+  })
+
+  it('blends across the antimeridian', () => {
+    const east = cell(5, 175)
+    const west = cell(5, -175)
+    const data = new Map([[keyOf(east), { data: flat(0) }], [keyOf(west), { data: flat(10) }]])
+    const values = buildGridFeatures([east, west], data, options).features.slice(0, 4).map(f => f.properties.value)
+    expect(values).toEqual([0, 0, 1.25, 3.75])
+  })
+
+  it('keeps one flat polygon per cell without subdivisions', () => {
+    const c = cell(5, 5)
+    const result = buildGridFeatures([c], new Map([[keyOf(c), { data: flat(3) }]]), { ...options, subdivisions: 1 })
+    expect(result.features).toHaveLength(1)
+    expect(result.features[0]?.geometry.coordinates).toEqual([[[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]])
+  })
+})
