@@ -2,6 +2,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { config } from '@/config'
 import type { Place } from '@/domain/types'
+import { defaultUnitSystem } from '@/domain/units'
 import { useMapStore } from '@/stores/mapStore'
 import { usePlacesStore } from '@/stores/placesStore'
 import { useSettingsStore } from '@/stores/settingsStore'
@@ -81,6 +82,10 @@ describe('placesStore', () => {
 })
 
 describe('settingsStore', () => {
+  it('defaults to the browser locale', () => {
+    expect(useSettingsStore().units).toBe(defaultUnitSystem(navigator.language))
+  })
+
   it('toggles units', () => {
     const settings = useSettingsStore()
     settings.setUnits('metric')
