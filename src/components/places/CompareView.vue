@@ -28,17 +28,6 @@
           {{ t('compare.title') }}
         </h2>
         <span class="text-body-s font-normal text-text-secondary">{{ t('compare.subtitle', { n: lines.length }) }}</span>
-        <button
-          type="button"
-          class="ml-auto inline-flex h-11 items-center gap-2 rounded-[12px] border border-border-strong bg-text-secondary/8 px-4 text-[15px] font-semibold"
-          @click="edit"
-        >
-          <AppIcon
-            name="star"
-            :size="18"
-          />
-          {{ t('compare.edit') }}
-        </button>
       </header>
 
       <div class="flex flex-col gap-4 px-3 pb-4 lg:grid lg:flex-1 lg:grid-rows-[auto_minmax(var(--compare-chart-min),1fr)] lg:px-6 lg:pb-6">
@@ -199,7 +188,7 @@ watch(() => places.compareOpen, async (open) => {
 /** Fewer than two places left: back to the list. */
 watch(() => places.comparePlaces.length, (n) => {
   if (places.compareOpen && n < config.compareMin) {
-    edit()
+    backToList()
   }
 })
 
@@ -217,7 +206,7 @@ function close(): void {
   void nextTick(() => target?.focus())
 }
 
-function edit(): void {
+function backToList(): void {
   places.setCompareOpen(false)
   places.setListOpen(true)
 }

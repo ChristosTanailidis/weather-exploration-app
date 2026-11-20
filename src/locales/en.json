@@ -238,7 +238,6 @@
     "title": "Compare",
     "subtitle": "{n} places · next 48 hours",
     "back": "Back to map",
-    "edit": "Edit selection",
     "remove": "Remove {name} from compare",
     "cardRegion": "{country} · {time}",
     "range": "Next 24 h",
