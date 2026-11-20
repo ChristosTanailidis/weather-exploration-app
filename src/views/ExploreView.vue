@@ -13,7 +13,7 @@
       <SelectionLayer />
       <LocationMarker />
       <nav
-        class="absolute top-[330px] right-3 z-(--z-controls) flex flex-col gap-3 lg:top-22 lg:right-auto lg:left-6"
+        class="absolute top-[286px] right-3 z-(--z-controls) flex flex-col gap-3 lg:top-22 lg:right-auto lg:left-6"
         :aria-label="t('map.buttons')"
       >
         <div class="glass flex flex-col gap-0.5 rounded-lg p-1">
@@ -52,14 +52,14 @@
     <PlacePanel />
     <MyPlacesPanel />
     <CompareView />
-    <StatusSlot class="absolute inset-x-3 top-[162px] z-(--z-toast) lg:top-22 lg:right-auto lg:left-102 lg:max-w-146" />
-    <div class="absolute top-14 right-18 left-3 z-(--z-popover) lg:top-6 lg:right-auto lg:left-6 lg:w-90">
+    <StatusSlot class="absolute inset-x-3 top-[118px] z-(--z-toast) lg:top-22 lg:right-auto lg:left-102 lg:max-w-146" />
+    <div class="absolute top-3 right-18 left-3 z-(--z-popover) lg:top-6 lg:right-auto lg:left-6 lg:w-90">
       <SearchBox @select="openSearchResult" />
     </div>
     <button
       v-if="!isDesktop"
       type="button"
-      class="glass absolute top-14 right-3 z-(--z-controls) flex size-12 items-center justify-center rounded-lg text-control"
+      class="glass absolute top-3 right-3 z-(--z-controls) flex size-12 items-center justify-center rounded-lg text-control"
       :aria-label="t('myPlaces.button')"
       :aria-pressed="places.listOpen"
       @click="places.setListOpen(!places.listOpen)"
@@ -69,10 +69,10 @@
         :filled="places.listOpen"
       />
     </button>
-    <LayerSwitcher class="absolute inset-x-3 top-[114px] z-(--z-controls) lg:top-6 lg:right-auto lg:left-102" />
+    <LayerSwitcher class="absolute inset-x-3 top-[70px] z-(--z-controls) lg:top-6 lg:right-auto lg:left-102" />
     <WeatherLegend class="absolute inset-x-3 bottom-34 z-(--z-controls) lg:right-auto lg:left-6 lg:w-80" />
     <TimeSlider class="absolute inset-x-3 bottom-6 z-(--z-controls) lg:right-(--drawer-zone) lg:left-6" />
-    <RequestCounter class="absolute top-1.5 right-3 z-(--z-toast) lg:top-auto lg:right-(--drawer-zone) lg:bottom-34" />
+    <RequestCounter class="absolute top-[78px] right-3 z-(--z-toast) lg:top-auto lg:right-(--drawer-zone) lg:bottom-34" />
   </main>
 </template>
 
