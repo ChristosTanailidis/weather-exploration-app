@@ -2,7 +2,7 @@
 
 Explore the weather anywhere in the world on an interactive globe: a TV weather map where you choose where to look.
 
-**Live demo:** _link added once the Vercel deployment is live_
+**Live demo:** [weather-exploration-app.vercel.app](https://weather-exploration-app.vercel.app/) (for example, [Thessaloniki, 37 hours ahead](https://weather-exploration-app.vercel.app/?v=39.926,22.48,6.72&place=city:734077&t=37))
 
 Pan the globe to see temperature, precipitation, wind or clouds across a whole region, scrub through the next 48 hours, click anywhere (sea included) or search for a place to dive into its forecast, save the places you care about, compare them side by side, and see the weather where you are.
 

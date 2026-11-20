@@ -66,10 +66,10 @@ export const env = {
   mapboxToken: (import.meta.env.VITE_MAPBOX_TOKEN ?? '').trim(),
 } as const
 
-/** External links shown in the UI. `liveDemo` stays empty until the app is deployed. */
+/** External links shown in the UI. */
 export const links = {
   mapboxGuide: 'https://docs.mapbox.com/help/getting-started/access-tokens/',
   openMeteo: 'https://open-meteo.com/',
   geonames: 'https://www.geonames.org/',
-  liveDemo: '',
+  liveDemo: 'https://weather-exploration-app.vercel.app/',
 } as const
