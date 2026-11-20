@@ -219,3 +219,22 @@ export const BASEMAP_COLORS = {
   label: '#8a97ac',
   labelHalo: 'rgba(8, 16, 28, 0.9)',
 } as const
+
+/** Chart colours from the handoff (ECharts needs plain colour strings). */
+export const CHART_COLORS = {
+  temp: '#f5b94a',
+  rain: 'rgba(79, 163, 247, 0.5)',
+  rainEmphasis: 'rgba(79, 163, 247, 0.85)',
+  rainAxis: '#6f9fd8',
+  gridLine: 'rgba(148, 170, 204, 0.12)',
+  zeroLine: 'rgba(148, 170, 204, 0.28)',
+  axisLabel: '#8a97ac',
+  tooltipBackground: '#1e2a3f',
+  tooltipBorder: 'rgba(148, 170, 204, 0.24)',
+  tooltipText: '#f2f5fa',
+  pointer: 'rgba(220, 227, 238, 0.5)',
+  night: 'rgba(120, 140, 190, 0.07)',
+  midnight: 'rgba(148, 170, 204, 0.28)',
+  now: '#f5b94a',
+  places: ['#7cc4ff', '#ff9a62', '#c9a7ff', '#6fe0a8'],
+} as const

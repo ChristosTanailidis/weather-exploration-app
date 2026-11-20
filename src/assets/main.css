@@ -227,3 +227,10 @@
     border-radius: 8px;
   }
 }
+
+/* Keep the Mapbox attribution clear of the drawer zone on desktop. */
+@media (min-width: 64rem) {
+  .mapboxgl-map .mapboxgl-ctrl-bottom-right {
+    right: var(--drawer-zone);
+  }
+}
