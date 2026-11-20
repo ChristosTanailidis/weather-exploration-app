@@ -109,6 +109,16 @@ export function useMap(container: Readonly<ShallowRef<HTMLElement | null>>): Map
     if (!request || !map.value) {
       return
     }
+    if (request.kind === 'fit') {
+      const { west, south, east, north } = request.bounds
+      map.value.fitBounds([[west, south], [east, north]], {
+        padding: config.fitPaddingPx,
+        maxZoom: config.placeZoom,
+        duration: config.flyDurationMs,
+        essential: false,
+      })
+      return
+    }
     map.value.flyTo({
       center: [request.lon, request.lat],
       zoom: request.zoom === undefined ? map.value.getZoom() : Math.max(map.value.getZoom(), request.zoom),

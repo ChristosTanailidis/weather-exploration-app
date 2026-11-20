@@ -34,6 +34,7 @@ export const ICON_PATHS = {
   sunset: ['M3 19h18M6.5 15.5a5.5 5.5 0 0 1 11 0M12 3.5V9M9 6l3 3 3-3'],
   chevronRight: ['M9 6l6 6-6 6'],
   arrowUp: ['M12 19V5M6 11l6-6 6 6'],
+  arrowDown: ['M12 5v14M6 13l6 6 6-6'],
 } as const satisfies Record<string, readonly string[]>
 
 export type IconName = keyof typeof ICON_PATHS

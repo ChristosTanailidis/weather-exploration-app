@@ -47,6 +47,10 @@ export const config = {
   /** Zoom used when flying to a place (never zooms out). */
   placeZoom: 7,
   flyDurationMs: 1_200,
+  /** Space kept around "My world" (camera padding for the drawer zone comes on top). */
+  fitPaddingPx: 96,
+  /** My places rows show the low/high over this many hours (from overview data). */
+  summaryHours: 24,
   maxZoom: 22,
   compareMin: 2,
   compareMax: 4,

@@ -2,6 +2,11 @@ import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { ref, shallowRef } from 'vue'
 import type { LatLon } from '@/domain/types'
+
+/** A camera move the map view performs: fly to a point or fit bounds. */
+export type CameraRequest =
+  | (LatLon & { kind: 'fly', zoom?: number, id: number })
+  | { kind: 'fit', bounds: Bounds, id: number }
 import { config } from '@/config'
 import type { Bounds } from '@/domain/geo'
 import { LAYER_IDS } from '@/domain/types'
@@ -33,7 +38,7 @@ export const useMapStore = defineStore('map', () => {
   /** Hours ahead of the current hour, 0 … forecastHours - 1. */
   const timeIndex = ref(0)
   /** Latest request to move the camera; the map view animates to it. */
-  const cameraRequest = shallowRef<(LatLon & { zoom?: number, id: number }) | null>(null)
+  const cameraRequest = shallowRef<CameraRequest | null>(null)
   let nextRequestId = 0
 
   function setView(next: MapView): void {
@@ -56,7 +61,13 @@ export const useMapStore = defineStore('map', () => {
   /** Asks the map to fly to `target`, optionally zooming in to at least `zoom`. */
   function flyTo(target: LatLon, zoom?: number): void {
     nextRequestId += 1
-    cameraRequest.value = { lat: target.lat, lon: target.lon, zoom, id: nextRequestId }
+    cameraRequest.value = { kind: 'fly', lat: target.lat, lon: target.lon, zoom, id: nextRequestId }
+  }
+
+  /** Asks the map to fit `bounds` (e.g. "My world"). */
+  function fitTo(bounds: Bounds): void {
+    nextRequestId += 1
+    cameraRequest.value = { kind: 'fit', bounds, id: nextRequestId }
   }
 
   return {
@@ -70,6 +81,7 @@ export const useMapStore = defineStore('map', () => {
     setLayer,
     setTimeIndex,
     flyTo,
+    fitTo,
     DEFAULT_LAYER,
   }
 })

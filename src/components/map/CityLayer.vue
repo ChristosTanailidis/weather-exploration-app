@@ -15,7 +15,8 @@ import { PILL_NONE_IMAGE, PILL_SAVED_IMAGE, PILL_SELECTED_IMAGE, loadMapImages }
 import { useViewportWeather } from '@/composables/useViewportWeather'
 import { config } from '@/config'
 import { MAP_COLORS } from '@/domain/colorRamps'
-import { buildCityFeatures } from '@/domain/mapFeatures'
+import { buildCityFeatures, buildPinFeatures } from '@/domain/mapFeatures'
+import type { Pin } from '@/domain/mapFeatures'
 import { cityIdOf } from '@/domain/places'
 import { useMapStore } from '@/stores/mapStore'
 import { usePlacesStore } from '@/stores/placesStore'
@@ -23,6 +24,8 @@ import { usePlacesStore } from '@/stores/placesStore'
 type LabelKind = 'normal' | 'saved' | 'selected'
 
 const SOURCE_ID = 'cities'
+/** Saved places and the selected city: pills, whatever the viewport. */
+const PINS_SOURCE_ID = 'pins'
 const LAYER_IDS: Readonly<Record<LabelKind, string>> = CITY_LAYER_IDS
 const NAME_SCALE = 0.75
 const LETTER_SPACING_EM = -0.01
@@ -52,18 +55,36 @@ const features = computed(() => buildCityFeatures(cities.value, weather.value, {
 const savedIds = computed(() => places.collection.flatMap(place => cityIdOf(place.key) ?? []))
 const selectedId = computed(() => (places.selected ? cityIdOf(places.selected.key) : null) ?? NO_ID)
 
+/** Saved places plus the selected city (a selected free point gets the point marker instead). */
+const pins = computed<Pin[]>(() => {
+  const selectedKey = places.selected?.key
+  const saved = places.collection.map(place => ({ place, saved: true, selected: place.key === selectedKey }))
+  const selected = places.selected
+  const extra = selected && selected.kind === 'city' && !places.isSaved(selected.key)
+    ? [{ place: selected, saved: false, selected: true }]
+    : []
+  return [...saved, ...extra]
+})
+
+const pinFeatures = computed(() => buildPinFeatures(pins.value, new Map([...weather.value, ...places.collectionWeather]), {
+  layer: store.activeLayer,
+  instantSec: instantSec.value,
+  label: layerLabel,
+}))
+
 /** Saved and selected labels are separate layers: layout properties can't read feature state. */
 function filterFor(kind: LabelKind): FilterSpecification {
-  const id: ExpressionSpecification = ['get', 'id']
   switch (kind) {
     case 'normal':
-      return ['!', ['in', id, ['literal', [...savedIds.value, selectedId.value]]]]
+      return ['!', ['in', ['get', 'id'], ['literal', [...savedIds.value, selectedId.value]]]]
     case 'saved':
-      return ['all', ['in', id, ['literal', savedIds.value]], ['!=', id, selectedId.value]]
+      return ['all', ['get', 'saved'], ['!', ['get', 'selected']]]
     case 'selected':
-      return ['==', id, selectedId.value]
+      return ['get', 'selected']
   }
 }
+
+const sourceFor = (kind: LabelKind): string => (kind === 'normal' ? SOURCE_ID : PINS_SOURCE_ID)
 
 const icon: ExpressionSpecification = ['image', ['get', 'icon']]
 const textField: ExpressionSpecification = [
@@ -78,10 +99,10 @@ function layerSpec(kind: LabelKind): SymbolLayerSpecification {
   return {
     id: LAYER_IDS[kind],
     type: 'symbol',
-    source: SOURCE_ID,
+    source: sourceFor(kind),
     filter: filterFor(kind),
     layout: {
-      'symbol-sort-key': ['*', -1, ['get', 'population']],
+      'symbol-sort-key': ['*', -1, ['coalesce', ['get', 'population'], 0]],
       'text-field': textField,
       'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
       'text-size': isDesktop.value ? config.labelTextSizeDesktop : config.labelTextSizeMobile,
@@ -111,6 +132,9 @@ async function install(instance: mapboxgl.Map): Promise<void> {
   if (!instance.getSource(SOURCE_ID)) {
     instance.addSource(SOURCE_ID, { type: 'geojson', data: features.value })
   }
+  if (!instance.getSource(PINS_SOURCE_ID)) {
+    instance.addSource(PINS_SOURCE_ID, { type: 'geojson', data: pinFeatures.value })
+  }
   // Below the clicked-point marker, if it is already there.
   const beforeId = instance.getLayer(SELECTED_POINT_LAYER_IDS.ring) ? SELECTED_POINT_LAYER_IDS.ring : undefined
   for (const kind of KINDS) {
@@ -130,11 +154,13 @@ watch(features, (data) => {
   map.value?.getSource<GeoJSONSource>(SOURCE_ID)?.setData(data)
 })
 
+watch(pinFeatures, (data) => {
+  map.value?.getSource<GeoJSONSource>(PINS_SOURCE_ID)?.setData(data)
+})
+
 watch([savedIds, selectedId], () => {
-  for (const kind of KINDS) {
-    if (map.value?.getLayer(LAYER_IDS[kind])) {
-      map.value.setFilter(LAYER_IDS[kind], filterFor(kind))
-    }
+  if (map.value?.getLayer(LAYER_IDS.normal)) {
+    map.value.setFilter(LAYER_IDS.normal, filterFor('normal'))
   }
 })
 
@@ -153,8 +179,10 @@ onBeforeUnmount(() => {
       instance.removeLayer(LAYER_IDS[kind])
     }
   }
-  if (instance?.getSource(SOURCE_ID)) {
-    instance.removeSource(SOURCE_ID)
+  for (const id of [SOURCE_ID, PINS_SOURCE_ID]) {
+    if (instance?.getSource(id)) {
+      instance.removeSource(id)
+    }
   }
 })
 </script>

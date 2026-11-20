@@ -209,5 +209,32 @@
     "sw": "SW",
     "w": "W",
     "nw": "NW"
+  },
+  "myPlaces": {
+    "title": "My places",
+    "button": "My places",
+    "close": "Close",
+    "myWorld": "My world",
+    "myWorldLabel": "My world: fit all saved places",
+    "selectHint": "Select 2–4 to compare",
+    "saveForWorld": "Save a place to use My world",
+    "list": "Saved places",
+    "youAreHere": "You are here",
+    "reorder": "Reorder {name}. Use arrow keys to move",
+    "select": "Select {name} for compare",
+    "more": "More actions for {name}",
+    "actions": "Actions for {name}",
+    "open": "Open",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "remove": "Remove",
+    "range": "{min} / {max}",
+    "rangeLabel": "Next 24 hours: low {min}, high {max}",
+    "selectedCount": "{n} of {max} selected",
+    "moved": "{name} moved to position {position}",
+    "removed": "{name} removed from My places",
+    "emptyTitle": "No saved places yet",
+    "emptyBody": "Open any place on the map or from search, then tap the {star} in its panel. Saved places show here and are outlined in amber on the map.",
+    "star": "star"
   }
 }

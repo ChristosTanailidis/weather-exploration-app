@@ -2,8 +2,9 @@ import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 import { config } from '@/config'
+import type { Cached } from '@/api/weatherService'
 import { sanitizePlaces } from '@/domain/places'
-import type { Place } from '@/domain/types'
+import type { HourlySeries, Place } from '@/domain/types'
 
 const COLLECTION_STORAGE_KEY = 'wxe.places'
 
@@ -25,16 +26,37 @@ export const usePlacesStore = defineStore('places', () => {
   const compareKeys = ref<string[]>([])
   /** The user's position as a place, once located. Never persisted. */
   const currentLocation = shallowRef<Place | null>(null)
+  /** Overview weather for the current location and saved places, by key. */
+  const collectionWeather = shallowRef<ReadonlyMap<string, Cached<HourlySeries>>>(new Map())
+  /** Whether the My places list is open (it shares the drawer with the place panel). */
+  const listOpen = ref(false)
+
+  /** "You are here" first, then the saved places. */
+  const listPlaces = computed(() => [
+    ...(currentLocation.value && !savedKeys.value.has(currentLocation.value.key) ? [currentLocation.value] : []),
+    ...collection.value,
+  ])
 
   const savedKeys = computed(() => new Set(collection.value.map(place => place.key)))
   const comparePlaces = computed(() =>
     compareKeys.value
-      .map(key => collection.value.find(place => place.key === key))
+      .map(key => listPlaces.value.find(place => place.key === key))
       .filter((place): place is Place => place !== undefined))
   const canCompare = computed(() => comparePlaces.value.length >= config.compareMin)
 
   function select(place: Place | null): void {
     selected.value = place
+    if (place) {
+      listOpen.value = false
+    }
+  }
+
+  function setListOpen(open: boolean): void {
+    listOpen.value = open
+  }
+
+  function setCollectionWeather(entries: ReadonlyMap<string, Cached<HourlySeries>>): void {
+    collectionWeather.value = new Map([...collectionWeather.value, ...entries])
   }
 
   function isSaved(key: string): boolean {
@@ -74,13 +96,22 @@ export const usePlacesStore = defineStore('places', () => {
     collection.value = next
   }
 
-  /** Adds or removes a saved place from the compare set (up to `compareMax`). */
+  /** Moves a saved place up (-1) or down (+1). */
+  function moveBy(key: string, delta: number): void {
+    const index = collection.value.findIndex(place => place.key === key)
+    if (index >= 0) {
+      move(key, index + delta)
+    }
+  }
+
+  /** Adds or removes a listed place from the compare set (up to `compareMax`). */
   function toggleCompare(key: string): boolean {
     if (compareKeys.value.includes(key)) {
       compareKeys.value = compareKeys.value.filter(k => k !== key)
       return true
     }
-    if (!isSaved(key) || compareKeys.value.length >= config.compareMax) {
+    const listed = listPlaces.value.some(place => place.key === key)
+    if (!listed || compareKeys.value.length >= config.compareMax) {
       return false
     }
     compareKeys.value = [...compareKeys.value, key]
@@ -100,6 +131,9 @@ export const usePlacesStore = defineStore('places', () => {
     collection,
     compareKeys,
     currentLocation,
+    collectionWeather,
+    listOpen,
+    listPlaces,
     comparePlaces,
     canCompare,
     select,
@@ -108,6 +142,9 @@ export const usePlacesStore = defineStore('places', () => {
     remove,
     toggleSaved,
     move,
+    moveBy,
+    setListOpen,
+    setCollectionWeather,
     toggleCompare,
     clearCompare,
     setCurrentLocation,

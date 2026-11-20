@@ -24,12 +24,12 @@ const { cities } = useCities()
 const places = usePlacesStore()
 const cityLayers = Object.values(CITY_LAYER_IDS)
 
-/** Marker for a selected place that has no city label of its own. */
+/** Marker for a selected place that has no label of its own (not a city, not a saved pin). */
 const data = computed(() => {
   const place = places.selected
   return {
     type: 'FeatureCollection' as const,
-    features: place && place.kind !== 'city'
+    features: place && place.kind !== 'city' && !places.isSaved(place.key)
       ? [{ type: 'Feature' as const, properties: {}, geometry: { type: 'Point' as const, coordinates: [place.lon, place.lat] } }]
       : [],
   }
@@ -68,8 +68,16 @@ function onClick(event: MapMouseEvent): void {
   }
   const layers = cityLayers.filter(id => instance.getLayer(id))
   const feature = layers.length > 0 ? instance.queryRenderedFeatures(event.point, { layers })[0] : undefined
-  // City features carry the dataset id as their feature id.
-  const id: unknown = (feature as { id?: unknown } | undefined)?.id
+  // City features carry the dataset id as their feature id; pins carry the place key.
+  const { id, properties } = (feature ?? {}) as { id?: unknown, properties?: Record<string, unknown> }
+  const pinKey = properties?.key
+  const pinned = typeof pinKey === 'string'
+    ? [...places.listPlaces, places.selected].find(place => place?.key === pinKey)
+    : undefined
+  if (pinned) {
+    places.select(pinned)
+    return
+  }
   const city = typeof id === 'number' ? cities.value.find(c => c.id === id) : undefined
   places.select(city
     ? placeFromCity(city)

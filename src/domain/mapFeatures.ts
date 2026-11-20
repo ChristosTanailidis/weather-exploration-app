@@ -1,6 +1,6 @@
 import { cityKey } from '@/domain/places'
 import type { GridCell } from '@/domain/geo'
-import type { City, HourlySeries, LayerId, LatLon } from '@/domain/types'
+import type { City, HourlySeries, LayerId, LatLon, Place } from '@/domain/types'
 import { describeWeather } from '@/domain/wmo'
 
 /*
@@ -203,4 +203,43 @@ export function buildGridFeatures(
     })
   }
   return { type: 'FeatureCollection', features }
+}
+
+export interface PinFeatureProps {
+  key: string
+  name: string
+  value: number | null
+  label: string
+  icon: string
+  saved: boolean
+  selected: boolean
+}
+
+export interface Pin {
+  place: Place
+  saved: boolean
+  selected: boolean
+}
+
+/**
+ * Saved places (always on the map, whatever the viewport) and the selected
+ * city, drawn as pill labels. Pins without data show the loading placeholder.
+ */
+export function buildPinFeatures(
+  pins: readonly Pin[],
+  data: ReadonlyMap<string, { data: HourlySeries }>,
+  options: SymbolOptions,
+): FeatureCollection<PointFeature<PinFeatureProps>> {
+  return {
+    type: 'FeatureCollection',
+    features: pins.map(({ place, saved, selected }) => {
+      const series = data.get(place.key)?.data
+      const symbol = (series ? symbolAt(series, options) : null) ?? { value: null, label: '', icon: PLACEHOLDER_IMAGE }
+      return {
+        type: 'Feature',
+        geometry: point(place),
+        properties: { key: place.key, name: place.name, saved, selected, ...symbol },
+      }
+    }),
+  }
 }

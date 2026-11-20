@@ -27,15 +27,47 @@
               :class="location.status.value === 'locating' && 'animate-pulse'"
             />
           </MapButton>
+          <MapButton
+            v-if="isDesktop"
+            :label="t('myPlaces.button')"
+            :aria-pressed="places.listOpen"
+            @click="places.setListOpen(!places.listOpen)"
+          >
+            <AppIcon
+              name="star"
+              :filled="places.listOpen"
+            />
+          </MapButton>
+          <MapButton
+            :label="t('myPlaces.myWorldLabel')"
+            :disabled="!canShowMyWorld"
+            @click="showMyWorld"
+          >
+            <AppIcon name="globe" />
+          </MapButton>
         </div>
         <MapZoomButtons v-if="isDesktop" />
       </nav>
     </MapView>
     <PlacePanel />
+    <MyPlacesPanel />
     <StatusSlot class="absolute inset-x-3 top-[162px] z-(--z-toast) lg:top-22 lg:right-auto lg:left-102 lg:max-w-146" />
-    <div class="absolute inset-x-3 top-14 z-(--z-popover) lg:top-6 lg:right-auto lg:left-6 lg:w-90">
+    <div class="absolute top-14 right-18 left-3 z-(--z-popover) lg:top-6 lg:right-auto lg:left-6 lg:w-90">
       <SearchBox @select="openSearchResult" />
     </div>
+    <button
+      v-if="!isDesktop"
+      type="button"
+      class="glass absolute top-14 right-3 z-(--z-controls) flex size-12 items-center justify-center rounded-lg text-control"
+      :aria-label="t('myPlaces.button')"
+      :aria-pressed="places.listOpen"
+      @click="places.setListOpen(!places.listOpen)"
+    >
+      <AppIcon
+        name="star"
+        :filled="places.listOpen"
+      />
+    </button>
     <LayerSwitcher class="absolute inset-x-3 top-[114px] z-(--z-controls) lg:top-6 lg:right-auto lg:left-102" />
     <WeatherLegend class="absolute inset-x-3 bottom-34 z-(--z-controls) lg:right-auto lg:left-6 lg:w-80" />
     <TimeSlider class="absolute inset-x-3 bottom-6 z-(--z-controls) lg:right-(--drawer-zone) lg:left-6" />
@@ -57,14 +89,17 @@ import SelectionLayer from '@/components/map/SelectionLayer.vue'
 import TimeSlider from '@/components/map/TimeSlider.vue'
 import WeatherLegend from '@/components/map/WeatherLegend.vue'
 import PlacePanel from '@/components/place/PlacePanel.vue'
+import MyPlacesPanel from '@/components/places/MyPlacesPanel.vue'
 import MissingTokenScreen from '@/components/ui/MissingTokenScreen.vue'
 import AppIcon from '@/components/ui/AppIcon.vue'
 import RequestCounter from '@/components/ui/RequestCounter.vue'
 import SearchBox from '@/components/ui/SearchBox.vue'
 import StatusSlot from '@/components/ui/StatusSlot.vue'
 import { useCities } from '@/composables/useCities'
+import { useCollectionWeather } from '@/composables/useCollectionWeather'
 import { useCurrentLocation } from '@/composables/useCurrentLocation'
 import { useIsDesktop } from '@/composables/useLayout'
+import { useMyWorld } from '@/composables/useMyWorld'
 import { useUrlState } from '@/composables/useUrlState'
 import { config, env } from '@/config'
 import { placeFromKey } from '@/domain/places'
@@ -86,6 +121,9 @@ useUrlState({
     maxKm: config.nearestCityMaxKm,
   }),
 })
+
+const { canShowMyWorld, showMyWorld } = useMyWorld()
+useCollectionWeather()
 
 const location = useCurrentLocation()
 onMounted(() => {

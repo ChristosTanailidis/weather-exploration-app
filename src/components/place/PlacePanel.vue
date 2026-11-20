@@ -1,7 +1,7 @@
 <template>
   <Transition name="drawer">
     <aside
-      v-if="place && isDesktop"
+      v-if="place && isDesktop && !places.listOpen"
       class="drawer absolute top-3 right-3 bottom-3 z-(--z-drawer) flex w-100 flex-col overflow-hidden rounded-[20px] border border-border bg-surface-panel shadow-panel"
       :aria-label="t('panel.label', { name: title })"
       @keydown.esc="close"
@@ -25,7 +25,7 @@
     </aside>
   </Transition>
   <BottomSheet
-    v-if="place && !isDesktop"
+    v-if="place && !isDesktop && !places.listOpen"
     v-model:expanded="expanded"
     :label="t('panel.label', { name: title })"
     :expand-label="t('panel.expand')"

@@ -5,6 +5,7 @@ import {
   WIND_ARROW_ANGLES,
   buildCityFeatures,
   buildGridFeatures,
+  buildPinFeatures,
   hourIndexAt,
   hourStartSec,
   layerValue,
@@ -190,5 +191,24 @@ describe('windArrowImage', () => {
     [-90, 'wx-wind-arrow-270'],
   ])('%f° → %s', (deg, name) => {
     expect(windArrowImage(deg)).toBe(name)
+  })
+})
+
+describe('buildPinFeatures', () => {
+  const athens = { key: 'city:264371', kind: 'city' as const, name: 'Athens', lat: 37.98, lon: 23.73 }
+  const sea = { key: 'pt:35.00,18.00', kind: 'point' as const, name: '', lat: 35, lon: 18 }
+
+  it('builds pills for saved and selected places, with placeholders while loading', () => {
+    const data = new Map([['city:264371', { data: series() }]])
+    const collection = buildPinFeatures(
+      [{ place: athens, saved: true, selected: false }, { place: sea, saved: true, selected: true }],
+      data,
+      { layer: 'temperature', instantSec: T0, label },
+    )
+    expect(collection.features.map(f => f.properties)).toEqual([
+      { key: 'city:264371', name: 'Athens', saved: true, selected: false, value: 10, label: 'temperature:10', icon: 'wx-clear-day' },
+      { key: 'pt:35.00,18.00', name: '', saved: true, selected: true, value: null, label: '', icon: PLACEHOLDER_IMAGE },
+    ])
+    expect(collection.features[0]?.geometry.coordinates).toEqual([23.73, 37.98])
   })
 })
