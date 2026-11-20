@@ -26,6 +26,14 @@ export const config = {
   desktopMediaQuery: '(min-width: 64rem)',
   /** Right strip kept free for the drawer on desktop; the camera centres in the rest. */
   drawerZonePx: 424,
+  /** Mobile sheets: movement before a press becomes a drag (smaller is a tap). */
+  sheetDragSlopPx: 6,
+  /** Release speed is measured over the last moves within this window. */
+  sheetVelocityWindowMs: 100,
+  /** How far the release speed carries a sheet before it settles on the nearest stop. */
+  sheetProjectionMs: 150,
+  /** From this release speed on, a swipe always moves the sheet one stop. */
+  sheetFlickPxPerMs: 0.5,
   thinningGrid: { cols: 8, rows: 6 },
   enableGridLayer: true,
   gridMaxPoints: 80,

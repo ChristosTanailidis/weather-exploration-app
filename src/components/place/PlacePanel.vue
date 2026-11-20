@@ -28,36 +28,41 @@
     </aside>
   </Transition>
   <BottomSheet
-    v-if="place && !isDesktop && !places.listOpen"
     v-model:expanded="expanded"
+    :open="!!place && !isDesktop && !places.listOpen"
     :label="t('panel.label', { name: title })"
     :expand-label="t('panel.expand')"
     :collapse-label="t('panel.collapse')"
     @dismiss="close"
     @keydown.esc="close"
   >
-    <div data-sheet-handle>
-      <PlaceHeader
-        ref="header"
-        :place="place"
-        :forecast="forecast"
-        @close="close"
-      />
-    </div>
-    <div
-      class="min-h-0 flex-1 pb-6"
-      :class="expanded ? 'overflow-y-auto' : 'overflow-hidden'"
-      :tabindex="expanded ? 0 : undefined"
-      role="region"
-      :aria-label="t('panel.details')"
-      :aria-busy="state.status === 'loading'"
-    >
-      <PanelContent
-        :state="state"
-        :compact="!expanded"
-        @retry="retry"
-      />
-    </div>
+    <template v-if="place">
+      <div
+        data-sheet-handle
+        class="touch-none"
+      >
+        <PlaceHeader
+          ref="header"
+          :place="place"
+          :forecast="forecast"
+          @close="close"
+        />
+      </div>
+      <div
+        class="min-h-0 flex-1 pb-6"
+        :class="expanded ? 'overflow-y-auto' : 'overflow-hidden'"
+        :tabindex="expanded ? 0 : undefined"
+        role="region"
+        :aria-label="t('panel.details')"
+        :aria-busy="state.status === 'loading'"
+      >
+        <PanelContent
+          :state="state"
+          :compact="!expanded"
+          @retry="retry"
+        />
+      </div>
+    </template>
   </BottomSheet>
 </template>
 

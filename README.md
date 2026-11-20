@@ -76,7 +76,7 @@ npm run preview        # serve the production build
 | **Meteocons** | Weather icons: static on the map, animated in panels (static with reduced motion). |
 | **flag-icons** | SVG flags; emoji flags don't render on Windows. Each flag file is fetched only when shown. |
 | **Fontsource** | Inter and Space Grotesk self-hosted, no third-party font requests. |
-| **Vitest** | 326 unit tests on the logic: domain, API layer, cache, weather service, stores, URL state, search. |
+| **Vitest** | 335 unit tests on the logic: domain, API layer, cache, weather service, stores, URL state, search, sheet gestures. |
 | **ESLint (flat config) + @stylistic** | Linting and formatting in one tool. |
 
 There is **no backend**: the app calls Open-Meteo straight from the browser. Open-Meteo's free-tier limits apply per IP address, so each visitor brings their own budget; a proxy would put every visitor on one IP and one budget.
@@ -167,6 +167,7 @@ Open-Meteo and GeoNames are also credited in the map's attribution control, next
 
 - Everything works by keyboard: `/` focuses search (an ARIA combobox: ↑ ↓ Enter Esc), the layer switcher uses arrow keys, and the time slider is a native range input with `aria-valuetext` (arrows 1 h, Shift 6 h, Page Up/Down 1 day, Home now, End last hour).
 - The details drawer isn't modal: focus moves to its title on open, and Esc or × returns focus to what opened it. My places rows reorder with ↑ ↓ on the handle; moves and removals are announced.
+- On mobile the sheets follow the finger (swipe up to expand, down to collapse or close), and every swipe has a button alternative: the grabber toggles the height and × closes.
 - Status messages use `role="status"` or `role="alert"`; loading regions set `aria-busy`; the retry countdown is shown but not announced every second.
 - Colour is never the only signal: compare lines also differ by dash, layers have icons and labels, and rain chance shows a number.
 - With `prefers-reduced-motion`, panel icons are static, the location pulse and skeleton shimmer stop, panels appear without sliding, charts don't animate and the camera jumps instead of flying.
